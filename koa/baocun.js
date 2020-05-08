@@ -1,6 +1,6 @@
 var fs = require('fs');
 var request = require("request");
-var src = "http://res.img.fffimage.com/images/2020/04/06/06/5267bfbb98.jpg/0";
+var src = "http://res.img.fffimage.com/images/2020/05/07/09/35052e68e8.jpg/0";
 var writeStream = fs.createWriteStream('image.png');
 var readStream = request(src)
 readStream.pipe(writeStream);

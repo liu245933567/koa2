@@ -5,7 +5,7 @@ const woshidashenxian = new Woshidashenxian();
 
 const app = new Koa()
 app.use(async (ctx, next) => {
-  const sectionsList = await woshidashenxian.getSectionsList();
+  const sectionsList = await woshidashenxian.getData();
   ctx.body = JSON.stringify({sectionsList})
 })
 
