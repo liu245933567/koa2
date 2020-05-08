@@ -3,8 +3,8 @@ const path = require('path');
 const url = require('url');
 
 //扩展res
-function changeRes(res){
-    res.send=(data)=>{
+function changeRes(res) {
+    res.send = (data) => {
         res.writeHead(200, { 'Content-Type': 'text/html;charset="utf-8"' });
         res.end(data);
     }
@@ -40,38 +40,38 @@ function initStatic(req, res, staticPath) {
 
 let server = () => {
     let G = {
-        _get:{},
-        _post:{},
-        staticPath:'static' //，默认静态web目录
+        _get: {},
+        _post: {},
+        staticPath: 'static' //，默认静态web目录
     };
-   
+
 
     let app = function (req, res) {
         //扩展res的方法
         changeRes(res);
         //配置静态web服务
-        initStatic(req, res,G.staticPath);
+        initStatic(req, res, G.staticPath);
 
         let pathname = url.parse(req.url).pathname;
         //获取请求类型
-        let method=req.method.toLowerCase();
+        let method = req.method.toLowerCase();
         console.log(method);
-        
-        if (G['_'+method][pathname]) {
 
-            if(method=="get"){ 
-                G['_'+method][pathname](req, res);  //执行方法
-            }else{
+        if (G['_' + method][pathname]) {
+
+            if (method == "get") {
+                G['_' + method][pathname](req, res);  //执行方法
+            } else {
                 //post  获取post的数据 把它绑定到req.body
                 let postData = '';
-                req.on('data',(chunk)=>{
-                    postData+=chunk;
+                req.on('data', (chunk) => {
+                    postData += chunk;
                 })
-                req.on('end',()=>{                  
-                   req.body=postData;
-                   G['_'+method][pathname](req, res);  //执行方法
+                req.on('end', () => {
+                    req.body = postData;
+                    G['_' + method][pathname](req, res);  //执行方法
                 })
-               
+
             }
 
         } else {
@@ -82,17 +82,17 @@ let server = () => {
     //get请求
     app.get = function (str, cb) {
         //注册方法
-        G._get[str] = cb;     
+        G._get[str] = cb;
     }
     //post请求
     app.post = function (str, cb) {
         //注册方法
-        G._post[str] = cb;      
+        G._post[str] = cb;
     }
     //配置静态web服务目录
-    app.static=function(staticPath){
-        G.staticPath=staticPath;
-    } 
+    app.static = function (staticPath) {
+        G.staticPath = staticPath;
+    }
 
     return app;
 }

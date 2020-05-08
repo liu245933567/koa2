@@ -6,8 +6,23 @@ const url = 'mongodb://localhost:27017';
 // Database Name
 const dbName = 'itying';
 
-// Create a new MongoClient
-const client = new MongoClient(url, { useUnifiedTopology: true });
+MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log("连接数据库成功");
+  const db = client.db(dbName);
+  //  查询
+  db.collection("user").insertOne(body, (err, result) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log('增加数据成功');
+    res.send('增加数据成功')
+  })
+})
 
 // Use connect method to connect to the Server
 client.connect((err) => {
