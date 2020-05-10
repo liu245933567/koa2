@@ -1,6 +1,7 @@
-const superagent = require('superagent')
+const superagent = require('superagent');
 const charset = require('superagent-charset');
-const cheerio = require('cheerio')
+const cheerio = require('cheerio');
+const fs = require('fs');
 charset(superagent)
 
 module.exports = class {
@@ -39,11 +40,17 @@ module.exports = class {
   getSectionsList() {
     const { cartoonName, url } = this;
     return new Promise(resolve => {
-      console.log(`开始获取${cartoonName}章节列表`);
+      console.log(`开始获取${cartoonName}章节列表 ~`);
       superagent
         .get(url)
+        .buffer(true)
         .charset('gb2312')
         .end((err, res) => {
+          if(err){
+            console.log(`获取${cartoonName}章节列表失败`);
+            resolve([])
+            return;
+          }
           const htmlText = res.text
           const $ = cheerio.load(htmlText);
           let sectionsList = []
@@ -81,11 +88,16 @@ module.exports = class {
       superagent
         .get(sectionInfo.sectionHref)
         .charset('gb2312')
+        .buffer(true)
         .end((err, res) => {
-          const htmlText = res.text;
           let photosr = [];
+          if(err){
+            console.log(`获取${sectionInfo.title}的图片列表失败`);
+            resolve(photosr);
+          }
+          const htmlText = res.text;
           // base64 js代码片段
-          const base64js = htmlText.match(/packed="\w{20,}";/g)[0].slice(8, -2);
+          const base64js = htmlText.match(/packed="\S{20,}";/g)[0].slice(8, -2);
           const deCode = new Buffer(base64js, 'base64').toString().slice(4);
           // 执行解析后的代码
           eval(eval(deCode));
@@ -108,8 +120,10 @@ module.exports = class {
 
   async getData() {
     const sectionsList = await this.getSectionsList();
+    if(sectionsList.length <1) return;
     this.data.sectionsList = sectionsList;
-    this.genIns = this.gen([sectionsList[0], sectionsList[1]]);
+    // this.genIns = this.gen([sectionsList[0], sectionsList[1]]);
+    this.genIns = this.gen(sectionsList);
     this.toGetImagesOfSingleSection();
   }
 
@@ -118,6 +132,10 @@ module.exports = class {
     if (sectionInfo) {
       const { sectionsList } = this.data;
       const imagesList = await this.getImagesOfSingleSection(sectionInfo);
+      if(imagesList.length < 1) {
+        this.toGetImagesOfSingleSection();
+        return;
+      }
       for (let i = 0; i < sectionsList.length; i++) {
         if (sectionsList[i].title === sectionInfo.title) {
           this.data.sectionsList[i].imagesList = imagesList;
@@ -126,7 +144,39 @@ module.exports = class {
       }
       this.toGetImagesOfSingleSection();
     } else {
-      console.log('全部获取完毕', this.data)
+      console.log('全部获取完毕', JSON.stringify(this.data))
+      let str = JSON.stringify(this.data)
+      fs.writeFile('data.json', str, (err) => {
+        if (err) {
+          console.log('生成json出错了');
+        } else {
+          console.log('写入json文件成功');
+        }
+      })
     }
   }
+
+  over() {
+    let result = JSON.stringify(detailArr);
+    // 将修改后的对象存回 json 文件中
+    fs.writeFile("./data/Details_shoplist_info.json", result, "utf8", function (err, data1) {
+      if (err) {
+        console.error(err);
+      }
+      else {
+        console.log("点赞成功！");
+        res.send(JSON.stringify(data1));
+      }
+    })
+
+    let str = JSON.stringify(data)
+    fs.writeFile('data.json', str, (err) => {
+      if (err) {
+        console.log('生成json出错了');
+      } else {
+        console.log('写入json文件成功');
+      }
+    })
+  }
+
 }
