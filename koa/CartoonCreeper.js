@@ -5,6 +5,7 @@ const fs = require('fs');
 const db = require('./mongoDB');
 charset(superagent);
 const moment = require('moment');
+const {othlogger, errlogger} = require('./logs/logger');
 
 /**
  * 爬取漫画资源信息
@@ -42,14 +43,14 @@ class CartoonCreeper {
   getSectionsList() {
     const { cartoonName, url, collectionTag } = this;
     return new Promise(resolve => {
-      console.log(`开始获取${cartoonName}章节列表 ~`);
+      othlogger.info(`开始获取${cartoonName}章节列表 ~`);
       superagent
         .get(url)
         .buffer(true)
         .charset('gb2312')
         .end((err, res) => {
           if (err) {
-            console.log(`获取${cartoonName}章节列表失败`);
+            errlogger.info(`获取${cartoonName}章节列表失败`);
             resolve([]);
           } else {
             const htmlText = res.text
@@ -84,7 +85,7 @@ class CartoonCreeper {
                 imagesList: []
               })
             });
-            console.log(`获取${cartoonName}章节列表结束, 共${sectionsList.length}章`);
+            othlogger.info(`获取${cartoonName}章节列表结束, 共${sectionsList.length}章`);
             resolve(sectionsList)
           }
         })
@@ -103,7 +104,7 @@ class CartoonCreeper {
    */
   getImagesOfSingleSection(sectionInfo) {
     return new Promise(resolve => {
-      console.log(`开始获取${sectionInfo.sectionTitle}的图片列表`);
+      othlogger.info(`开始获取${sectionInfo.sectionTitle}的图片列表`);
       superagent
         .get(sectionInfo.sectionHref)
         .charset('gb2312')
@@ -111,7 +112,7 @@ class CartoonCreeper {
         .end((err, res) => {
           let photosr = [];
           if (err) {
-            console.log(`获取${sectionInfo.sectionTitle}的图片列表失败`);
+            errlogger.info(`获取${sectionInfo.sectionTitle}的图片列表失败`);
             resolve(photosr);
             return;
           }
@@ -122,7 +123,7 @@ class CartoonCreeper {
           // 执行解析后的代码
           eval(eval(deCode));
           photosr = photosr.filter(item => item).map(link => `http://res.img.fffimage.com/${link}`);
-          console.log(`获取${sectionInfo.sectionTitle}图片地址完毕, 共${photosr.length}张`);
+          othlogger.info(`获取${sectionInfo.sectionTitle}图片地址完毕, 共${photosr.length}张`);
           resolve(photosr)
         })
     })
@@ -144,7 +145,7 @@ class CartoonCreeper {
     if (sectionsList.length < 1) return;
     const storeSectionList = await db.find(`cartoon_${collectionTag}_section_list`, {});
     if (!storeSectionList) {
-      console.log('获取数据库信息出错');
+      errlogger.info('获取数据库信息出错');
       return;
     }
     const needUpdataSectionList = sectionsList.filter(item =>
@@ -154,10 +155,10 @@ class CartoonCreeper {
     )
     // this.data.sectionsList = sectionsList;
     if(needUpdataSectionList.length === 0){
-      console.log('目前已经是最新');
+      othlogger.info('目前已经是最新');
       return;
     }
-    this.isUpdata = true;
+    // this.isUpdata = true;
     this.genIns = this.gen(needUpdataSectionList);
     this.toGetImagesOfSingleSection();
   }
@@ -175,18 +176,24 @@ class CartoonCreeper {
       await db.insert(`cartoon_${this.collectionTag}_section_list`, sectionInfo);
       this.toGetImagesOfSingleSection();
     } else {
-      if(this.isUpdata){
+      // if(this.isUpdata){
+      //   await db.update(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId}, this.cartoonInfo);
+      // } else {
+      //   await db.insert(`cartoon_list`, this.cartoonInfo);
+      // }
+      const before = await db.find(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId});
+      if(before && before.length > 0) {
         await db.update(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId}, this.cartoonInfo);
       } else {
         await db.insert(`cartoon_list`, this.cartoonInfo);
       }
-      console.log('全部获取完毕');
+      othlogger.info('全部获取完毕');
       // let str = JSON.stringify(this.data)
       // fs.writeFile('congqian.json', str, (err) => {
       //   if (err) {
-      //     console.log('生成json出错了');
+      //     errlogger.info('生成json出错了');
       //   } else {
-      //     console.log('写入json文件成功');
+      //     othlogger.info('写入json文件成功');
       //   }
       // })
     }

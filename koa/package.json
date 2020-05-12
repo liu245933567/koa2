@@ -17,6 +17,7 @@
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",
     "koa2-cors": "^2.0.6",
+    "log4js": "^6.2.1",
     "mongodb": "^3.5.7",
     "request": "^2.88.2",
     "superagent": "^5.2.2",
