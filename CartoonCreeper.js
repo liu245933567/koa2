@@ -1,11 +1,11 @@
 const superagent = require('superagent');
 const charset = require('superagent-charset');
 const cheerio = require('cheerio');
-const fs = require('fs');
 const db = require('./mongoDB');
 charset(superagent);
 const moment = require('moment');
-const {othlogger, errlogger} = require('./logs/logger');
+const { othlogger, errlogger } = require('./logs/logger');
+const cartoonCreeperTarget = require('./cartoonCreeperTarget');
 
 /**
  * 爬取漫画资源信息
@@ -16,6 +16,7 @@ const {othlogger, errlogger} = require('./logs/logger');
  */
 class CartoonCreeper {
   constructor({ cartoonName, cartoonUrl, collectionTag }) {
+    this.cartoonList = Array.prototype.slice.call(arguments);
     this.cartoonName = cartoonName;
     // 漫画链接
     this.url = cartoonUrl;
@@ -24,11 +25,14 @@ class CartoonCreeper {
     this.isUpdata = false;
     // 漫画基本信息
     this.cartoonInfo = null;
-    this.genIns = null;
+    this.sectionListGrnIns = null;
+    this.cartConfigListGenIns = null;
     this.getSectionsList = this.getSectionsList.bind(this);
     this.getImagesOfSingleSection = this.getImagesOfSingleSection.bind(this);
     this.getData = this.getData.bind(this);
     this.toGetImagesOfSingleSection = this.toGetImagesOfSingleSection.bind(this);
+    this.afterGeting = this.afterGeting.bind(this);
+    this.getNextCartoon = this.getNextCartoon.bind(this);
   }
 
   /**
@@ -61,8 +65,11 @@ class CartoonCreeper {
               return arr.length ? Number(arr[arr.length - 1]) : 9999;
             }
             const cartoonId = getCartoonIdFromUrl(url);
-            const description = $("#intro1").html();
+            const description = $(".introduction").text();
+            const coverImage = $('.info_cover img').prop("src");
             this.cartoonInfo = {
+              _id: cartoonId,
+              coverImage,
               cartoonId,
               collectionTag,
               description: description || '暂无简介',
@@ -130,22 +137,26 @@ class CartoonCreeper {
   }
 
   /**
-   * 获取列表队列
+   * 生成章节列表队列
    * @param {Array} sectionsList 
    */
-  * gen(sectionsList) {
+  * sectionListGrn(sectionsList) {
     for (let i = 0; i < sectionsList.length; i++) {
       yield sectionsList[i]
     }
   }
 
+  /**
+   * 开始获取信息
+   */
   async getData() {
     const { collectionTag } = this;
     const sectionsList = await this.getSectionsList();
     if (sectionsList.length < 1) return;
     const storeSectionList = await db.find(`cartoon_${collectionTag}_section_list`, {});
     if (!storeSectionList) {
-      errlogger.info('获取数据库信息出错');
+      errlogger.info(`获取${this.cartoonName}数据库信息出错`);
+      this.getNextCartoon();
       return;
     }
     const needUpdataSectionList = sectionsList.filter(item =>
@@ -154,19 +165,22 @@ class CartoonCreeper {
       ) === -1
     )
     // this.data.sectionsList = sectionsList;
-    if(needUpdataSectionList.length === 0){
-      othlogger.info('目前已经是最新');
+    if (needUpdataSectionList.length === 0) {
+      othlogger.info(`目前${this.cartoonName}已经是最新`);
+      this.getNextCartoon();
       return;
     }
     // this.isUpdata = true;
-    this.genIns = this.gen(needUpdataSectionList);
+    this.sectionListGrnIns = this.sectionListGrn(needUpdataSectionList);
     this.toGetImagesOfSingleSection();
   }
 
+  /**
+   * 执行迭代队列
+   */
   async toGetImagesOfSingleSection() {
-    let sectionInfo = this.genIns.next().value;
+    let sectionInfo = this.sectionListGrnIns.next().value;
     if (sectionInfo) {
-      // const { sectionsList } = this.data;
       const imagesList = await this.getImagesOfSingleSection(sectionInfo);
       if (imagesList.length < 1) {
         this.toGetImagesOfSingleSection();
@@ -176,40 +190,58 @@ class CartoonCreeper {
       await db.insert(`cartoon_${this.collectionTag}_section_list`, sectionInfo);
       this.toGetImagesOfSingleSection();
     } else {
-      // if(this.isUpdata){
-      //   await db.update(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId}, this.cartoonInfo);
-      // } else {
-      //   await db.insert(`cartoon_list`, this.cartoonInfo);
-      // }
-      const before = await db.find(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId});
-      if(before && before.length > 0) {
-        await db.update(`cartoon_list`, {cartoonId: this.cartoonInfo.cartoonId}, this.cartoonInfo);
-      } else {
-        await db.insert(`cartoon_list`, this.cartoonInfo);
-      }
-      othlogger.info('全部获取完毕');
-      // let str = JSON.stringify(this.data)
-      // fs.writeFile('congqian.json', str, (err) => {
-      //   if (err) {
-      //     errlogger.info('生成json出错了');
-      //   } else {
-      //     othlogger.info('写入json文件成功');
-      //   }
-      // })
+      this.afterGeting();
     }
+  }
+
+  /**
+   * 获取完一个动漫的信息后
+   */
+  async afterGeting() {
+    const {
+      coverImage,
+      description,
+      updataTime,
+      cartoonId
+    } = this.cartoonInfo;
+    const before = await db.find(`cartoon_list`, { cartoonId });
+    if (before && before.length > 0) {
+      await db.update(`cartoon_list`, { cartoonId }, {
+        coverImage,
+        description,
+        updataTime
+      });
+    } else {
+      await db.insert(`cartoon_list`, this.cartoonInfo);
+    }
+    othlogger.info(`${this.cartoonName} 章节已经全部获取完毕`);
+    this.getNextCartoon();
+  }
+
+  /**
+   * 查询下一个动漫
+   */
+  getNextCartoon() {
+    this.cartoonList.splice(0, 1);
+    const firstCaroon = this.cartoonList[0];
+    if (!firstCaroon) return;
+    const {
+      cartoonName,
+      cartoonUrl,
+      collectionTag
+    } = firstCaroon;
+    this.cartoonName = cartoonName;
+    this.url = cartoonUrl;
+    this.collectionTag = collectionTag;
+    this.getData();
   }
 }
 
-// const ins = new CartoonCreeper({
-//   cartoonName: '我是大神仙',
-//    cartoonUrl: 'https://www.iimanhua.com/comic/1204/index.html', 
-//    collectionTag: 'woshidashenxian'
-// });
 
-const ins = new CartoonCreeper({
-  cartoonName: '元尊',
-   cartoonUrl: 'https://www.iimanhua.com/comic/1381/index.html', 
-   collectionTag: 'yuanzun'
-});
+
+
+
+const ins = new CartoonCreeper(...cartoonCreeperTarget);
+
 ins.getData();
 

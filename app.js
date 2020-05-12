@@ -30,7 +30,7 @@ app.use(bodyParser({
 
 // 章节列表
 router.post('/cartoon/detail.json', async (ctx) => {
-  const sectios = await db.find('woshidashenxian', {});
+  const sectios = await db.find(`cartoon_woshidashenxian_section_list`, {});
   console.log('\033[43;30m post: \033[0m /cartoon/detail.json');
   ctx.response.body = {
     status: 200,

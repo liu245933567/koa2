@@ -21,6 +21,7 @@
     "mongodb": "^3.5.7",
     "request": "^2.88.2",
     "superagent": "^5.2.2",
-    "superagent-charset": "^1.2.0"
+    "superagent-charset": "^1.2.0",
+    "koa-bodyparser": "^4.3.0"
   }
 }
