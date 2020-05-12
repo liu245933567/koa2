@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "koa": "^2.11.0",
-    "koa-router": "^8.0.8"
+    "koa-router": "^8.0.8",
+    "moment": "^2.25.3"
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",

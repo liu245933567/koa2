@@ -26,7 +26,7 @@ class DB {
     return new Promise((resolve, reject) => {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
-        MongoClient.connect(Config.dbUrl, { useNewUrlParser: true }, (err, client) => {
+        MongoClient.connect(Config.dbUrl, { useNewUrlParser: true,useUnifiedTopology: true }, (err, client) => {
           if (err) {
             reject(err)
           } else {

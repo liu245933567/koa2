@@ -4,7 +4,6 @@ const bodyParser = require('koa-bodyparser');
 const cors = require('koa2-cors');
 const app = new Koa();
 const db = require('./mongoDB');
-
 const router = new Router();
 
 app.use(cors({
@@ -33,20 +32,21 @@ app.use(bodyParser({
 router.post('/cartoon/detail.json', async (ctx) => {
   const sectios = await db.find('woshidashenxian', {});
   console.log('\033[43;30m post: \033[0m /cartoon/detail.json');
-  ctx.response.body = { 
-    status: 200, 
+  ctx.response.body = {
+    status: 200,
     isOk: true,
     msg: '',
     sectios: sectios || []
   };
 })
+
 // 章节详情
 router.post('/cartoon/sectionDtail.json', async (ctx) => {
   console.log('\033[43;30m post: \033[0m /cartoon/sectionDtail.json');
   // const sectios = await db.find('woshidashenxian', {});
-  console.log(koa-bodyparser);
-  ctx.response.body = { 
-    status: 200, 
+  console.log(koa - bodyparser);
+  ctx.response.body = {
+    status: 200,
     isOk: true,
     msg: '',
     sectios: []
