@@ -26,7 +26,6 @@ class CartoonCreeper {
     // 漫画基本信息
     this.cartoonInfo = null;
     this.sectionListGrnIns = null;
-    this.cartConfigListGenIns = null;
     this.getSectionsList = this.getSectionsList.bind(this);
     this.getImagesOfSingleSection = this.getImagesOfSingleSection.bind(this);
     this.getData = this.getData.bind(this);
@@ -224,7 +223,10 @@ class CartoonCreeper {
   getNextCartoon() {
     this.cartoonList.splice(0, 1);
     const firstCaroon = this.cartoonList[0];
-    if (!firstCaroon) return;
+    if (!firstCaroon) {
+      othlogger.info(`所有的动漫章节已经全部获取完毕`);
+      return;
+    };
     const {
       cartoonName,
       cartoonUrl,
