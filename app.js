@@ -28,15 +28,27 @@ app.use(bodyParser({
   enableTypes: ['json', 'form', 'text']
 }));
 
+// 动漫列表
+router.post('/cartoon/cartoonList.json', async (ctx) => {
+  const cartoonList = await db.find(`cartoon_list`, {});
+  console.log('\033[43;30m post: \033[0m /cartoon/cartoonList.json');
+  ctx.response.body = {
+    status: 200,
+    isOk: true,
+    msg: '',
+    cartoonList: cartoonList || []
+  };
+})
+
 // 章节列表
-router.post('/cartoon/detail.json', async (ctx) => {
-  const sectios = await db.find(`cartoon_woshidashenxian_section_list`, {});
+router.post('/cartoon/cartoonDetail.json', async (ctx) => {
+  const sectioList = await db.find(`cartoon_woshidashenxian_section_list`, {});
   console.log('\033[43;30m post: \033[0m /cartoon/detail.json');
   ctx.response.body = {
     status: 200,
     isOk: true,
     msg: '',
-    sectios: sectios || []
+    sectioList: sectioList || []
   };
 })
 

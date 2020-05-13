@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "supervisor node app.js",
+    "start": "cross-env NODE_ENV=test ./node_modules/.bin/nodemon bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -16,12 +16,14 @@
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "cross-env": "^7.0.2",
+    "koa-bodyparser": "^4.3.0",
     "koa2-cors": "^2.0.6",
     "log4js": "^6.2.1",
     "mongodb": "^3.5.7",
+    "nodemon": "^2.0.3",
     "request": "^2.88.2",
     "superagent": "^5.2.2",
-    "superagent-charset": "^1.2.0",
-    "koa-bodyparser": "^4.3.0"
+    "superagent-charset": "^1.2.0"
   }
 }
