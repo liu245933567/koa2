@@ -59,7 +59,6 @@ app.use(response_formatter('^/api'));
 // 动漫列表
 router.post('/cartoon/cartoonList.json', async (ctx) => {
   const cartoonList = await db.find(`cartoon_list`, {});
-  console.log('\033[43;30m post: \033[0m /cartoon/cartoonList.json');
   ctx.response.body = {
     status: 200,
     isOk: true,
@@ -71,7 +70,6 @@ router.post('/cartoon/cartoonList.json', async (ctx) => {
 // 章节列表
 router.post('/cartoon/cartoonDetail.json', async (ctx) => {
   const sectioList = await db.find(`cartoon_woshidashenxian_section_list`, {});
-  console.log('\033[43;30m post: \033[0m /cartoon/detail.json');
   ctx.response.body = {
     status: 200,
     isOk: true,
@@ -82,9 +80,6 @@ router.post('/cartoon/cartoonDetail.json', async (ctx) => {
 
 // 章节详情
 router.post('/cartoon/sectionDtail.json', async (ctx) => {
-  console.log('\033[43;30m post: \033[0m /cartoon/sectionDtail.json');
-  // const sectios = await db.find('woshidashenxian', {});
-  console.log(koa - bodyparser);
   ctx.response.body = {
     status: 200,
     isOk: true,
@@ -97,6 +92,4 @@ router.post('/cartoon/sectionDtail.json', async (ctx) => {
 app.use(router.routes())
 app.use(router.allowedMethods());
 
-app.listen(3000, () => {
-  console.log('\033[42;30m 服务器启动成功 \033[0;32m server is starting at port 3000\033[0m')
-});
+module.exports = app;
