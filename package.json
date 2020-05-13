@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development ./node_modules/.bin/nodemon bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require @babel/register test/*/*.spec.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,15 +15,22 @@
     "moment": "^2.25.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
     "cross-env": "^7.0.2",
     "koa-bodyparser": "^4.3.0",
     "koa2-cors": "^2.0.6",
     "log4js": "^6.2.1",
+    "mocha": "^7.1.2",
     "mongodb": "^3.5.7",
     "nodemon": "^2.0.3",
     "request": "^2.88.2",
     "superagent": "^5.2.2",
-    "superagent-charset": "^1.2.0"
+    "superagent-charset": "^1.2.0",
+    "supertest": "^4.0.2"
   }
 }
