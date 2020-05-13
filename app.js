@@ -27,7 +27,7 @@ app.use(async (ctx, next) => {
   }
   await next();
 })
-app.use(response_formatter('^/api'));
+
 
 app.use(bodyParser({
   enableTypes: ['json', 'form', 'text']
@@ -51,7 +51,10 @@ app.use(async (ctx, next) => {
     logUtil.logError(ctx, error, ms);
   }
 });
+
 router.use('/api', api.routes(), api.allowedMethods());
+app.use(response_formatter('^/api'));
+
 
 // 动漫列表
 router.post('/cartoon/cartoonList.json', async (ctx) => {
