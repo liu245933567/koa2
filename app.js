@@ -6,6 +6,7 @@ const app = new Koa();
 const api = require('./routes/api');
 const db = require('./mongoDB');
 const router = new Router();
+const response_formatter = require('./middlewares/response_formatter');
 //log工具
 const logUtil = require('./utils/log_util');
 
@@ -26,6 +27,7 @@ app.use(async (ctx, next) => {
   }
   await next();
 })
+app.use(response_formatter('^/api'));
 
 app.use(bodyParser({
   enableTypes: ['json', 'form', 'text']
