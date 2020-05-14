@@ -26,7 +26,7 @@ class DB {
     return new Promise((resolve, reject) => {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
-        MongoClient.connect(Config.dbUrl, { useNewUrlParser: true,useUnifiedTopology: true }, (err, client) => {
+        MongoClient.connect(Config.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
           if (err) {
             reject(err)
           } else {
@@ -44,6 +44,35 @@ class DB {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         var result = db.collection(collectionName).find(json);
+        result.toArray(function (err, doc) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(doc);
+        })
+
+      })
+    })
+  }
+  // 分页查询
+  findFormPage(collectionName, condition, inputConfig) {
+    const config = {
+      pageIndex: 1, 
+      pageSize: 20, 
+      sortKey: '_id',
+      sortType: 1,
+      ...inputConfig
+    };
+    const skipNum = config.pageSize * (config.pageIndex - 1);
+    return new Promise((resolve, reject) => {
+      this.connect().then((db) => {
+        const result = db
+        .collection(collectionName)
+        .find(condition)
+        .sort({[config.sortKey]:config.sortType})
+        .skip(skipNum)
+        .limit(config.pageSize);
         result.toArray(function (err, doc) {
           if (err) {
             reject(err);
