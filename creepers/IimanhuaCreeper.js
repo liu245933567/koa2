@@ -1,7 +1,7 @@
 const superagent = require('superagent');
 const charset = require('superagent-charset');
 const cheerio = require('cheerio');
-const db = require('./mongoDB');
+const db = require('../mongoDB');
 charset(superagent);
 const moment = require('moment');
 const { othlogger, errlogger } = require('../logs/logger');
