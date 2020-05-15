@@ -1,5 +1,5 @@
 const router = require('koa-router')();
-const cartoon_controller = require('../../app/controllers/cartoon_controller');
+const cartoon_controller = require('../../controllers/cartoon_controller');
 
 router.post('/cartoonList.json', cartoon_controller.getCartoonList);
 router.post('/cartoonDetail.json', cartoon_controller.getCartoonDetail);

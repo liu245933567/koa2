@@ -1,4 +1,4 @@
-const logUtil = require('../utils/log_util');
+const logUtil = require('../utils/log');
 
 module.exports = async (ctx, next) => {
   //响应开始时间

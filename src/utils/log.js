@@ -1,8 +1,8 @@
-var log4js = require('log4js');
-var log_config = require('../config/log_config');
+const log4js = require('log4js');
+const {logConfig} = require('../config');
 
 //加载配置文件
-log4js.configure(log_config);
+log4js.configure(logConfig);
 
 //格式化响应日志
 const formatRes =  (ctx, resTime) => {

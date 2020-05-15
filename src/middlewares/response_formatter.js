@@ -1,4 +1,4 @@
-const ApiError = require('../app/error/ApiError');
+const ApiError = require('../utils/ApiError');
 /**
  * 在app.use(router)之前调用
  */

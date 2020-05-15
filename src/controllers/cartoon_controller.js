@@ -1,6 +1,5 @@
-const ApiError = require('../error/ApiError');
-const ApiErrorNames = require('../error/ApiErrorNames');
-const db = require('../../mongoDB');
+const ApiError = require('../utils/ApiError');
+const db = require('../models/mongoDB');
 
 //获取动漫列表
 exports.getCartoonList = async (ctx, next) => {
@@ -18,11 +17,11 @@ exports.getCartoonDetail = async (ctx) => {
     pageIndex,
     pageSize
   } = ctx.request.body;
-  if (!collectionTag) throw new ApiError(ApiErrorNames.PARAM_MISS);
+  if (!collectionTag) throw new ApiError('PARAM_MISS');
 
   const queryCartoonListRes = await db.find('cartoon_list', {collectionTag});
 
-  if(Object.prototype.toString.call(queryCartoonListRes) === '[object Array]' && queryCartoonListRes.length < 1) throw new ApiError(ApiErrorNames.PARAM_ERROR);
+  if(Object.prototype.toString.call(queryCartoonListRes) === '[object Array]' && queryCartoonListRes.length < 1) throw new ApiError('PARAM_ERROR');
 
   const sectioList = await db.findFormPage(
     `cartoon_${collectionTag}_section_list`,
@@ -50,11 +49,11 @@ exports.getSectionDetail = async (ctx) => {
     collectionTag
   } = ctx.request.body;
 
-  if (!collectionTag || !sectionId) throw new ApiError(ApiErrorNames.PARAM_MISS);
+  if (!collectionTag || !sectionId) throw new ApiError('PARAM_MISS');
 
   const sectionListRes = await db.find(`cartoon_${collectionTag}_section_list`, {sectionId});
 
-  if(Object.prototype.toString.call(sectionListRes) === '[object Array]' && sectionListRes.length < 1) throw new ApiError(ApiErrorNames.PARAM_ERROR);
+  if(Object.prototype.toString.call(sectionListRes) === '[object Array]' && sectionListRes.length < 1) throw new ApiError('PARAM_ERROR');
   console.log('sectionListRes', sectionListRes);
 
   ctx.body = {
