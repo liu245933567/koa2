@@ -12,24 +12,30 @@ exports.getCartoonList = async (ctx, next) => {
 
 // 获取动漫详情
 exports.getCartoonDetail = async (ctx) => {
-  if (!ctx.request.body) throw new ApiError(ApiErrorNames.PARAM_MISS);
   const {
     collectionTag,
     sortType,
     pageIndex,
     pageSize
   } = ctx.request.body;
-  if (!collectionTag || !(collectionTag !== 'woshidashenxian' || collectionTag !== 'congqianyouzuolingjianshan')) {
-    throw new ApiError(ApiErrorNames.PARAM_ERROR);
-  }
+  if (!collectionTag) throw new ApiError(ApiErrorNames.PARAM_MISS);
 
-  const sectioList = await db.findFormPage(`cartoon_${collectionTag}_section_list`, {}, {
-    pageIndex: pageIndex || 1,
-    pageSize: pageSize || 20,
-    sortType: sortType || 1,
-    sortKey: 'sectionId',
-  });
+  const queryCartoonListRes = await db.find('cartoon_list', {collectionTag});
+
+  if(Object.prototype.toString.call(queryCartoonListRes) === '[object Array]' && queryCartoonListRes.length < 1) throw new ApiError(ApiErrorNames.PARAM_ERROR);
+
+  const sectioList = await db.findFormPage(
+    `cartoon_${collectionTag}_section_list`,
+    {},
+    {
+      pageIndex: pageIndex || 1,
+      pageSize: pageSize || 20,
+      sortType: sortType || 1,
+      sortKey: 'sectionId',
+    }
+  );
   ctx.body = {
+    cartoonInfo: queryCartoonListRes[0],
     sectioList: sectioList ? sectioList.map(item => ({
       sectionId: item.sectionId,
       sectionTitle: item.sectionTitle
@@ -38,8 +44,20 @@ exports.getCartoonDetail = async (ctx) => {
 }
 
 // 获取章节详情
-exports.getSectionDtail = async (ctx) => {
-  ctx.response.body = {
-    imageList: []
+exports.getSectionDetail = async (ctx) => {
+  const {
+    sectionId,
+    collectionTag
+  } = ctx.request.body;
+
+  if (!collectionTag || !sectionId) throw new ApiError(ApiErrorNames.PARAM_MISS);
+
+  const sectionListRes = await db.find(`cartoon_${collectionTag}_section_list`, {sectionId});
+
+  if(Object.prototype.toString.call(sectionListRes) === '[object Array]' && sectionListRes.length < 1) throw new ApiError(ApiErrorNames.PARAM_ERROR);
+  console.log('sectionListRes', sectionListRes);
+
+  ctx.body = {
+    sectionInfo: sectionListRes[0]
   };
 }

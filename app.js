@@ -14,7 +14,7 @@ const router = new Router();
 
 app.use(setHeader);
 app.use(bodyParser());
-app.use(cors);
+// app.use(cors);
 app.use(logger());
 app.use(loger);
 
