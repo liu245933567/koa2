@@ -5,7 +5,7 @@ const MongoClient = MongoDB.MongoClient;
 // 获取操作数据库ID的方法
 const ObjectID = MongoDB.ObjectID;
 // 引入数据库的配置文件
-const {mongodb_url} = require('../config');
+const dbConfig = require('../config');
 
 class DB {
   // 单例模式，解决多次实例化实例不共享的问题
@@ -26,11 +26,11 @@ class DB {
     return new Promise((resolve, reject) => {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
-        MongoClient.connect(mongodb_url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        MongoClient.connect(dbConfig.host, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
           if (err) {
             reject(err)
           } else {
-            that.dbClient = client.db('cartoon');
+            that.dbClient = client.db(dbConfig.database);
             resolve(that.dbClient)
           }
         })

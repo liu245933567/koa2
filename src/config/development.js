@@ -2,10 +2,18 @@ const logConfig = require('./log4js.config');
 
 // 开发环境的配置内容
 module.exports = {
-    env: 'development', //环境名称
-    port: 3000,         //服务端口号
-    mongodb_url: 'mongodb://localhost:27017',    //数据库地址
-    redis_url:'',       //redis地址
-    logConfig,
-    redis_port: ''      //redis端口号
+  //环境名称
+  env: 'development',
+  //服务端口号
+  port: 3000,
+  // 数据库配置
+  dbConfig: {
+    host: 'mongodb://localhost:27017',
+    user: 'root',
+    password: '',
+    database: 'cartoon'
+  },
+  redis_url: '',       //redis地址
+  redis_port: '',      //redis端口号
+  logConfig,
 }
