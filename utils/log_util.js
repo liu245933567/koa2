@@ -4,44 +4,25 @@ var log_config = require('../config/log_config');
 //加载配置文件
 log4js.configure(log_config);
 
-var logUtil = {};
-
-var errorLogger = log4js.getLogger('errorLogger');
-var resLogger = log4js.getLogger('resLogger');
-
-//封装错误日志
-logUtil.logError = function (ctx, error, resTime) {
-  if (ctx && error) {
-    errorLogger.error(formatError(ctx, error, resTime));
-  }
-};
-
-//封装响应日志
-logUtil.logResponse = function (ctx, resTime) {
-  if (ctx) {
-    resLogger.info(formatRes(ctx, resTime));
-  }
-};
-
 //格式化响应日志
-var formatRes = function (ctx, resTime) {
-  var logText = new String();
+const formatRes =  (ctx, resTime) => {
+  let logText = new String();
   //响应日志开始
-  logText += "\n" + "*************** response log start ***************" + "\n";
+  logText += `\n*************** response log start ***************\n`;
   //添加请求日志
   logText += formatReqLog(ctx.request, resTime);
   //响应状态码
-  logText += "response status: " + ctx.status + "\n";
+  logText += `response status: ${ctx.status}\n`;
   //响应内容
-  logText += "response body: " + "\n" + JSON.stringify(ctx.body) + "\n";
+  logText += `response body: \n ${JSON.stringify(ctx.body)}\n`;
   //响应日志结束
-  logText += "*************** response log end ***************" + "\n";
+  logText += `*************** response log end ***************\n`;
   return logText;
 }
 
 //格式化错误日志
-var formatError = function (ctx, err, resTime) {
-  var logText = new String();
+const formatError =  (ctx, err, resTime) => {
+  let logText = new String();
   //错误信息开始
   logText += "\n" + "*************** error log start ***************" + "\n";
   //添加请求日志
@@ -58,9 +39,9 @@ var formatError = function (ctx, err, resTime) {
 };
 
 //格式化请求日志
-var formatReqLog = function (req, resTime) {
-  var logText = new String();
-  var method = req.method;
+const formatReqLog =  (req, resTime) => {
+  let logText = new String();
+  const method = req.method;
   //访问方法
   logText += "request method: " + method + "\n";
   //请求原始地址
@@ -68,7 +49,7 @@ var formatReqLog = function (req, resTime) {
   //客户端ip
   logText += "request client ip:  " + req.ip + "\n";
   //开始时间
-  var startTime;
+  // var startTime;
   //请求参数
   if (method === 'GET') {
     logText += "request query:  " + JSON.stringify(req.query) + "\n";
@@ -82,4 +63,19 @@ var formatReqLog = function (req, resTime) {
   return logText;
 }
 
-module.exports = logUtil;
+module.exports = {
+  //封装错误日志
+  logResponse(ctx, resTime) {
+    if (ctx) {
+      const resLogger = log4js.getLogger('resLogger');
+      resLogger.info(formatRes(ctx, resTime));
+    }
+  },
+  //封装响应日志
+  logError(ctx, error, resTime) {
+    if (ctx && error) {
+      const errorLogger = log4js.getLogger('errorLogger');
+      errorLogger.error(formatError(ctx, error, resTime));
+    }
+  }
+};
