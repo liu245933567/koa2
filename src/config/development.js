@@ -11,9 +11,9 @@ module.exports = {
     host: 'mongodb://localhost:27017',
     user: 'root',
     password: '',
-    database: 'cartoon'
+    database: 'cartoon',
   },
-  redis_url: '',       //redis地址
-  redis_port: '',      //redis端口号
+  redisUrl: '', //redis地址
+  redisPort: '', //redis端口号
   logConfig,
-}
+};

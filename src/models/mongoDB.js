@@ -5,7 +5,7 @@ const MongoClient = MongoDB.MongoClient;
 // 获取操作数据库ID的方法
 const ObjectID = MongoDB.ObjectID;
 // 引入数据库的配置文件
-const dbConfig = require('../config');
+const {dbConfig} = require('../config');
 
 class DB {
   // 单例模式，解决多次实例化实例不共享的问题
@@ -23,37 +23,39 @@ class DB {
   // 连接数据库
   connect() {
     let that = this;
+
     return new Promise((resolve, reject) => {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
         MongoClient.connect(dbConfig.host, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
             that.dbClient = client.db(dbConfig.database);
-            resolve(that.dbClient)
+            resolve(that.dbClient);
           }
-        })
+        });
       } else {
         resolve(that.dbClient);
       }
-    })
+    });
   }
   // 查找方法
   find(collectionName, json) {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         var result = db.collection(collectionName).find(json);
+
         result.toArray(function (err, doc) {
           if (err) {
             reject(err);
             return;
           }
           resolve(doc);
-        })
+        });
 
-      })
-    })
+      });
+    });
   }
   // 分页查询
   findFormPage(collectionName, condition, inputConfig) {
@@ -62,43 +64,47 @@ class DB {
       pageSize: 20, 
       sortKey: '_id',
       sortType: 1,
-      ...inputConfig
+      ...inputConfig,
     };
+
+    console.log('11111111');
     const skipNum = config.pageSize * (config.pageIndex - 1);
+
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         const result = db
         .collection(collectionName)
         .find(condition)
-        .sort({[config.sortKey]:config.sortType})
+        .sort({[config.sortKey]: config.sortType})
         .skip(skipNum)
         .limit(config.pageSize);
+
         result.toArray(function (err, doc) {
           if (err) {
             reject(err);
             return;
           }
           resolve(doc);
-        })
+        });
 
-      })
-    })
+      });
+    });
   }
   // 更新方法
   update(collectionName, oldJson, newJson) {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         db.collection(collectionName).updateOne(oldJson, {
-          $set: newJson
+          $set: newJson,
         }, (err, result) => {
           if (err) {
             reject(err);
           } else {
             resolve(result);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
   // 插入数据
   insert(collectionName, json) {
@@ -110,9 +116,9 @@ class DB {
           } else {
             resolve(result);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
   // 删除数据
   remove(collectionName, json) {
@@ -124,9 +130,9 @@ class DB {
           } else {
             resolve(result);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
   // mongodb里面查询_id需要把字符串转换成对象
   getObjectId(id) {
