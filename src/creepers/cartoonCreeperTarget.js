@@ -69,4 +69,4 @@ module.exports = [
     cartoonUrl: 'https://www.iimanhua.com/comic/1418/index.html',
     collectionTag: 'wuliandianfeng'
   }
-]
+];

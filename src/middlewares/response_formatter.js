@@ -1,4 +1,5 @@
 const ApiError = require('../utils/ApiError');
+
 /**
  * 在app.use(router)之前调用
  */
@@ -10,18 +11,19 @@ const response_formatter = (ctx) => {
       code: 200,
       message: 'success',
       ...ctx.body
-    }
+    };
   } else {
     ctx.body = {
       isOk: true,
       code: 200,
       message: 'success'
-    }
+    };
   }
-}
+};
 
 const url_filter = (pattern) => async (ctx, next) => {
   const reg = new RegExp(pattern);
+
   try {
     //先去执行路由
     await next();
@@ -32,7 +34,7 @@ const url_filter = (pattern) => async (ctx, next) => {
       ctx.body = {
         code: error.code,
         message: error.message
-      }
+      };
     }
     //继续抛，让外层中间件处理日志
     throw error;
@@ -41,5 +43,6 @@ const url_filter = (pattern) => async (ctx, next) => {
   if (reg.test(ctx.originalUrl)) {
     response_formatter(ctx);
   }
-}
+};
+
 module.exports = url_filter;

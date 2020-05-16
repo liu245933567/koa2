@@ -1,13 +1,13 @@
 module.exports = {
   'env': {
     'es6': true,
-    'node': true,
+    'node': true
   },
   'extends': 'eslint:recommended',
   'parserOptions': {
     'sourceType': 'script',
     // "sourceType": "module",
-    'ecmaVersion': 7,
+    'ecmaVersion': 7
   },
   'parser': 'babel-eslint',
   'rules': {
@@ -51,18 +51,18 @@ module.exports = {
       'error',
       {
         'newIsCap': true,
-        'capIsNew': false,
-      },
+        'capIsNew': false
+      }
     ],
     'no-multiple-empty-lines': [
       'error',
       {
-        'max': 2,
-      },
+        'max': 2
+      }
     ],
     'no-shadow-restricted-names': 'error',
     'no-undef-init': 'error',
     'keyword-spacing': 'error',
-    'space-before-blocks': ['error', 'always'],
-  },
+    'space-before-blocks': ['error', 'always']
+  }
 };

@@ -49,8 +49,9 @@ class ApiError extends Error {
       'USER_NOT_EXIST': { code: 101, message: '用户不存在' },
       'PARAM_MISS': { code: 500, message: '参数缺失' },
       'PARAM_ERROR': { code: 500, message: '参数错误' }
-    }
+    };
     const error_info = error_map[error_name] || error_map['UNKNOW_ERROR'];
+
     this.name = error_name;
     this.code = error_info.code;
     this.message = error_info.message;

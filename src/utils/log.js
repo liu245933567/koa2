@@ -28,7 +28,7 @@ const formatReqLog = (req, resTime) => {
   //服务器响应时间
   logText += 'response time: ' + resTime + '\n';
   
-return logText;
+  return logText;
 };
 
 //格式化响应日志
@@ -46,7 +46,7 @@ const formatRes = (ctx, resTime) => {
   //响应日志结束
   logText += '*************** response log end ***************\n';
   
-return logText;
+  return logText;
 };
 
 //格式化错误日志
@@ -86,5 +86,5 @@ module.exports = {
 
       errorLogger.error(formatError(ctx, error, resTime));
     }
-  },
+  }
 };

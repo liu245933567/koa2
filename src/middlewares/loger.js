@@ -5,6 +5,7 @@ module.exports = async (ctx, next) => {
   const start = new Date();
   //响应间隔时间
   var ms;
+
   try {
     //开始进入到下一个中间件
     await next();
@@ -16,4 +17,4 @@ module.exports = async (ctx, next) => {
     //记录异常日志
     logUtil.logError(ctx, error, ms);
   }
-}
+};

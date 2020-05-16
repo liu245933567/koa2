@@ -2,10 +2,11 @@ const superagent = require('superagent');
 const charset = require('superagent-charset');
 const cheerio = require('cheerio');
 const db = require('./mongoDB');
-charset(superagent);
 const moment = require('moment');
 const { othlogger, errlogger } = require('./logs/logger');
 const cartoonCreeperTarget = require('./cartoonCreeperTarget');
+
+charset(superagent);
 
 /**
  * 爬取漫画资源信息
@@ -45,6 +46,7 @@ class CartoonCreeper {
    */
   getSectionsList() {
     const { cartoonName, url, collectionTag } = this;
+
     return new Promise(resolve => {
       othlogger.info(`开始获取${cartoonName}章节列表 ~`);
       superagent
@@ -56,16 +58,19 @@ class CartoonCreeper {
             errlogger.info(`获取${cartoonName}章节列表失败`);
             resolve([]);
           } else {
-            const htmlText = res.text
+            const htmlText = res.text;
             const $ = cheerio.load(htmlText);
+
             let sectionsList = [];
             const getCartoonIdFromUrl = (href) => {
-              const arr = href.split('/').filter(item => Number(item || 'NaN') || Number(item) || 'NaN' === 0)
+              const arr = href.split('/').filter(item => Number(item || 'NaN') || Number(item) || 'NaN' === 0);
+
               return arr.length ? Number(arr[arr.length - 1]) : 9999;
-            }
+            };
             const cartoonId = getCartoonIdFromUrl(url);
-            const description = $(".introduction").text();
-            const coverImage = $('.info_cover img').prop("src");
+            const description = $('.introduction').text();
+            const coverImage = $('.info_cover img').prop('src');
+
             this.cartoonInfo = {
               _id: cartoonId,
               coverImage,
@@ -73,29 +78,30 @@ class CartoonCreeper {
               collectionTag,
               description: description || '暂无简介',
               cartoonName: cartoonName,
-              updataTime: moment().format("YYYY-MM-DD")
-            }
-            $("#play_0 ul li").each((i, v) => {
-              const $aEl = $(v).find('a')
+              updataTime: moment().format('YYYY-MM-DD')
+            };
+            $('#play_0 ul li').each((i, v) => {
+              const $aEl = $(v).find('a');
               // 标题
-              const sectionTitle = $aEl.prop("title");
+              const sectionTitle = $aEl.prop('title');
               // 章节地址
-              const sectionHref = `https://www.iimanhua.com${$aEl.prop("href")}`;
+              const sectionHref = `https://www.iimanhua.com${$aEl.prop('href')}`;
               const idMatch = sectionHref.match(/[0-9]{1,}.html/g);
               const sectionId = idMatch && idMatch[0] ? Number(idMatch[0].slice(0, -5)) : 9999;
+
               sectionsList.push({
                 sectionTitle,
                 sectionHref,
                 sectionId,
                 _id: sectionId,
                 imagesList: []
-              })
+              });
             });
             othlogger.info(`获取${cartoonName}章节列表结束, 共${sectionsList.length}章`);
-            resolve(sectionsList)
+            resolve(sectionsList);
           }
-        })
-    })
+        });
+    });
   }
 
 
@@ -117,6 +123,7 @@ class CartoonCreeper {
         .buffer(true)
         .end((err, res) => {
           let photosr = [];
+
           if (err) {
             errlogger.info(`获取${sectionInfo.sectionTitle}的图片列表失败`);
             resolve(photosr);
@@ -127,12 +134,13 @@ class CartoonCreeper {
           const base64js = htmlText.match(/packed="\S{20,}";/g)[0].slice(8, -2);
           const deCode = Buffer.from(base64js, 'base64').toString().slice(4);
           // 执行解析后的代码
+
           eval(eval(deCode));
           photosr = photosr.filter(item => item).map(link => `http://res.img.fffimage.com/${link}`);
           othlogger.info(`获取${sectionInfo.sectionTitle}图片地址完毕, 共${photosr.length}张`);
-          resolve(photosr)
-        })
-    })
+          resolve(photosr);
+        });
+    });
   }
 
   /**
@@ -141,7 +149,7 @@ class CartoonCreeper {
    */
   * sectionListGrn(sectionsList) {
     for (let i = 0; i < sectionsList.length; i++) {
-      yield sectionsList[i]
+      yield sectionsList[i];
     }
   }
   
@@ -152,8 +160,12 @@ class CartoonCreeper {
   async getData() {
     const { collectionTag } = this;
     const sectionsList = await this.getSectionsList();
-    if (sectionsList.length < 1) return;
+
+    if (sectionsList.length < 1) {
+      return; 
+    }
     const storeSectionList = await db.find(`cartoon_${collectionTag}_section_list`, {});
+
     if (!storeSectionList) {
       errlogger.info(`获取${this.cartoonName}数据库信息出错`);
       this.getNextCartoon();
@@ -163,8 +175,9 @@ class CartoonCreeper {
       storeSectionList.findIndex(storeItem =>
         storeItem._id === item._id
       ) === -1
-    )
+    );
     // this.data.sectionsList = sectionsList;
+
     if (needUpdataSectionList.length === 0) {
       othlogger.info(`目前${this.cartoonName}已经是最新`);
       this.getNextCartoon();
@@ -180,8 +193,10 @@ class CartoonCreeper {
    */
   async toGetImagesOfSingleSection() {
     let sectionInfo = this.sectionListGrnIns.next().value;
+
     if (sectionInfo) {
       const imagesList = await this.getImagesOfSingleSection(sectionInfo);
+
       if (imagesList.length < 1) {
         this.toGetImagesOfSingleSection();
         return;
@@ -204,15 +219,16 @@ class CartoonCreeper {
       updataTime,
       cartoonId
     } = this.cartoonInfo;
-    const before = await db.find(`cartoon_list`, { cartoonId });
+    const before = await db.find('cartoon_list', { cartoonId });
+
     if (before && before.length > 0) {
-      await db.update(`cartoon_list`, { cartoonId }, {
+      await db.update('cartoon_list', { cartoonId }, {
         coverImage,
         description,
         updataTime
       });
     } else {
-      await db.insert(`cartoon_list`, this.cartoonInfo);
+      await db.insert('cartoon_list', this.cartoonInfo);
     }
     othlogger.info(`${this.cartoonName} 章节已经全部获取完毕`);
     this.getNextCartoon();
@@ -224,24 +240,23 @@ class CartoonCreeper {
   getNextCartoon() {
     this.cartoonList.splice(0, 1);
     const firstCaroon = this.cartoonList[0];
+
     if (!firstCaroon) {
-      othlogger.info(`所有的动漫章节已经全部获取完毕`);
+      othlogger.info('所有的动漫章节已经全部获取完毕');
       return;
-    };
+    }
     const {
       cartoonName,
       cartoonUrl,
       collectionTag
     } = firstCaroon;
+
     this.cartoonName = cartoonName;
     this.url = cartoonUrl;
     this.collectionTag = collectionTag;
     this.getData();
   }
 }
-
-
-
 
 
 const ins = new CartoonCreeper(...cartoonCreeperTarget);
