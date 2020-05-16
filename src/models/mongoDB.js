@@ -5,7 +5,7 @@ const MongoClient = MongoDB.MongoClient;
 // 获取操作数据库ID的方法
 const ObjectID = MongoDB.ObjectID;
 // 引入数据库的配置文件
-const {dbConfig} = require('../config');
+const { dbConfig } = require('../config');
 
 class DB {
   // 单例模式，解决多次实例化实例不共享的问题
@@ -27,14 +27,17 @@ class DB {
     return new Promise((resolve, reject) => {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
-        MongoClient.connect(dbConfig.host, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-          if (err) {
-            reject(err);
-          } else {
-            that.dbClient = client.db(dbConfig.database);
-            resolve(that.dbClient);
-          }
-        });
+        MongoClient.connect(
+          `mongodb://admin:123456@${dbConfig.host}`,
+          { useNewUrlParser: true, useUnifiedTopology: true },
+          (err, client) => {
+            if (err) {
+              reject(err);
+            } else {
+              that.dbClient = client.db(dbConfig.database);
+              resolve(that.dbClient);
+            }
+          });
       } else {
         resolve(that.dbClient);
       }
@@ -60,11 +63,11 @@ class DB {
   // 分页查询
   findFormPage(collectionName, condition, inputConfig) {
     const config = {
-      pageIndex: 1, 
-      pageSize: 20, 
+      pageIndex: 1,
+      pageSize: 20,
       sortKey: '_id',
       sortType: 1,
-      ...inputConfig,
+      ...inputConfig
     };
 
     console.log('11111111');
@@ -73,11 +76,11 @@ class DB {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         const result = db
-        .collection(collectionName)
-        .find(condition)
-        .sort({[config.sortKey]: config.sortType})
-        .skip(skipNum)
-        .limit(config.pageSize);
+          .collection(collectionName)
+          .find(condition)
+          .sort({ [config.sortKey]: config.sortType })
+          .skip(skipNum)
+          .limit(config.pageSize);
 
         result.toArray(function (err, doc) {
           if (err) {
@@ -95,7 +98,7 @@ class DB {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
         db.collection(collectionName).updateOne(oldJson, {
-          $set: newJson,
+          $set: newJson
         }, (err, result) => {
           if (err) {
             reject(err);

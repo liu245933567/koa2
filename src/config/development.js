@@ -8,12 +8,12 @@ module.exports = {
   port: 3000,
   // 数据库配置
   dbConfig: {
-    host: 'mongodb://localhost:27017',
-    user: 'root',
-    password: '',
-    database: 'cartoon',
+    host: '49.233.26.21:27017',
+    username: 'admin',
+    password: '123456',
+    database: 'cartoon'
   },
   redisUrl: '', //redis地址
   redisPort: '', //redis端口号
-  logConfig,
+  logConfig
 };
