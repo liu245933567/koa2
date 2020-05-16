@@ -20,13 +20,13 @@ exports.getCartoonDetail = async (ctx) => {
   } = ctx.request.body;
 
   if (!collectionTag) {
-    throw new ApiError('PARAM_MISS'); 
+    throw new ApiError('PARAM_MISS');
   }
 
   const queryCartoonListRes = await db.find('cartoon_list', {collectionTag});
 
   if (Object.prototype.toString.call(queryCartoonListRes) === '[object Array]' && queryCartoonListRes.length < 1) {
-    throw new ApiError('PARAM_ERROR'); 
+    throw new ApiError('PARAM_ERROR');
   }
 
   const sectioList = await db.findFormPage(
@@ -57,13 +57,13 @@ exports.getSectionDetail = async (ctx) => {
   } = ctx.request.body;
 
   if (!collectionTag || !sectionId) {
-    throw new ApiError('PARAM_MISS'); 
+    throw new ApiError('PARAM_MISS');
   }
 
   const sectionListRes = await db.find(`cartoon_${collectionTag}_section_list`, {sectionId});
 
   if (Object.prototype.toString.call(sectionListRes) === '[object Array]' && sectionListRes.length < 1) {
-    throw new ApiError('PARAM_ERROR'); 
+    throw new ApiError('PARAM_ERROR');
   }
   console.log('sectionListRes', sectionListRes);
 

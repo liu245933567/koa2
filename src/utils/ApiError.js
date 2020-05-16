@@ -42,19 +42,19 @@
  */
 class ApiError extends Error {
   //构造方法
-  constructor(error_name) {
+  constructor(errorName) {
     super();
-    const error_map = {
+    const errorMap = {
       'UNKNOW_ERROR': { code: -1, message: '未知错误' },
       'USER_NOT_EXIST': { code: 101, message: '用户不存在' },
       'PARAM_MISS': { code: 500, message: '参数缺失' },
       'PARAM_ERROR': { code: 500, message: '参数错误' }
     };
-    const error_info = error_map[error_name] || error_map['UNKNOW_ERROR'];
+    const errorInfo = errorMap[errorName] || errorMap.UNKNOW_ERROR;
 
-    this.name = error_name;
-    this.code = error_info.code;
-    this.message = error_info.message;
+    this.name = errorName;
+    this.code = errorInfo.code;
+    this.message = errorInfo.message;
   }
 }
 

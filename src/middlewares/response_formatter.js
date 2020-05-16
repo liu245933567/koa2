@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 /**
  * 在app.use(router)之前调用
  */
-const response_formatter = (ctx) => {
+const responseFormatter = (ctx) => {
   //如果有返回数据，将返回数据添加到data中
   if (ctx.body) {
     ctx.body = {
@@ -21,7 +21,7 @@ const response_formatter = (ctx) => {
   }
 };
 
-const url_filter = (pattern) => async (ctx, next) => {
+const urlFilter = (pattern) => async (ctx, next) => {
   const reg = new RegExp(pattern);
 
   try {
@@ -41,8 +41,8 @@ const url_filter = (pattern) => async (ctx, next) => {
   }
   //通过正则的url进行格式化处理
   if (reg.test(ctx.originalUrl)) {
-    response_formatter(ctx);
+    responseFormatter(ctx);
   }
 };
 
-module.exports = url_filter;
+module.exports = urlFilter;

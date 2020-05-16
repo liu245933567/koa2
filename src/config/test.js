@@ -10,7 +10,7 @@ module.exports = {
     password: '123456',
     database: 'cartoon'
   },
-  redis_url: '', //redis地址
-  redis_port: '', //redis端口号
+  redisUrl: '', //redis地址
+  redisPort: '', //redis端口号
   logConfig
 };

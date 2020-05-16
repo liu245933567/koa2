@@ -4,7 +4,7 @@ const ApiErrorNames = require('../error/ApiErrorNames');
 
 exports.getUser = async (ctx) => {
   //如果id != 1抛出API 异常
-  if (ctx.query.id != 1) {
+  if (ctx.query.id !== 1) {
     throw new ApiError(ApiErrorNames.USER_NOT_EXIST);
   }
   console.log('走这个了');

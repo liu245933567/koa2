@@ -36,7 +36,7 @@ module.exports = {
     // 允许来自所有域名请求
     ctx.set('Access-Control-Allow-Origin', '*');
     // 这样就能只允许 http://localhost:8080 这个域名的请求了
-    // ctx.set("Access-Control-Allow-Origin", "http://localhost:8080"); 
+    // ctx.set("Access-Control-Allow-Origin", "http://localhost:8080");
 
     // 设置所允许的HTTP请求方法
     ctx.set('Access-Control-Allow-Methods', 'OPTIONS, GET, PUT, POST, DELETE');

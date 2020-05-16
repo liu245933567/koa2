@@ -11,7 +11,8 @@ module.exports = {
     host: '49.233.26.21:27017',
     username: 'admin',
     password: '123456',
-    database: 'cartoon'
+    database: 'cartoon',
+    useNewUrlParser: true, useUnifiedTopology: true
   },
   redisUrl: '', //redis地址
   redisPort: '', //redis端口号

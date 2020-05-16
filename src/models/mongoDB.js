@@ -1,9 +1,9 @@
 // 引入MongoDB数据库模块
-const MongoDB = require('mongodb');
-// 获得数据库客户端
-const MongoClient = MongoDB.MongoClient;
-// 获取操作数据库ID的方法
-const ObjectID = MongoDB.ObjectID;
+const MongoDB = require('mongodb'),
+  // 获得数据库客户端
+  MongoClient = MongoDB.MongoClient,
+  // 获取操作数据库ID的方法
+  ObjectID = MongoDB.ObjectID;
 // 引入数据库的配置文件
 const { dbConfig } = require('../config');
 
@@ -28,7 +28,7 @@ class DB {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
         MongoClient.connect(
-          `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}`,
+          `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.database}`,
           { useNewUrlParser: true, useUnifiedTopology: true },
           (err, client) => {
             if (err) {
@@ -70,7 +70,6 @@ class DB {
       ...inputConfig
     };
 
-    console.log('11111111');
     const skipNum = config.pageSize * (config.pageIndex - 1);
 
     return new Promise((resolve, reject) => {

@@ -135,6 +135,7 @@ class CartoonCreeper {
           const deCode = Buffer.from(base64js, 'base64').toString().slice(4);
           // 执行解析后的代码
 
+          // eslint-disable-next-line no-eval
           eval(eval(deCode));
           photosr = photosr.filter(item => item).map(link => `http://res.img.fffimage.com/${link}`);
           othlogger.info(`获取${sectionInfo.sectionTitle}图片地址完毕, 共${photosr.length}张`);
@@ -145,14 +146,14 @@ class CartoonCreeper {
 
   /**
    * 生成章节列表队列
-   * @param {Array} sectionsList 
+   * @param {Array} sectionsList
    */
   * sectionListGrn(sectionsList) {
     for (let i = 0; i < sectionsList.length; i++) {
       yield sectionsList[i];
     }
   }
-  
+
 
   /**
    * 开始获取信息
@@ -162,7 +163,7 @@ class CartoonCreeper {
     const sectionsList = await this.getSectionsList();
 
     if (sectionsList.length < 1) {
-      return; 
+      return;
     }
     const storeSectionList = await db.find(`cartoon_${collectionTag}_section_list`, {});
 

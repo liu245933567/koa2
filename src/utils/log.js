@@ -6,7 +6,7 @@ log4js.configure(logConfig);
 
 //格式化请求日志
 const formatReqLog = (req, resTime) => {
-  let logText = new String();
+  let logText = '';
   const method = req.method;
   //访问方法
 
@@ -27,13 +27,13 @@ const formatReqLog = (req, resTime) => {
   }
   //服务器响应时间
   logText += 'response time: ' + resTime + '\n';
-  
+
   return logText;
 };
 
 //格式化响应日志
 const formatRes = (ctx, resTime) => {
-  let logText = new String();
+  let logText = '';
   //响应日志开始
 
   logText += '\n*************** response log start ***************\n';
@@ -45,13 +45,13 @@ const formatRes = (ctx, resTime) => {
   logText += `response body: \n ${JSON.stringify(ctx.body)}\n`;
   //响应日志结束
   logText += '*************** response log end ***************\n';
-  
+
   return logText;
 };
 
 //格式化错误日志
 const formatError = (ctx, err, resTime) => {
-  let logText = new String();
+  let logText = '';
   //错误信息开始
 
   logText += '\n' + '*************** error log start ***************' + '\n';
