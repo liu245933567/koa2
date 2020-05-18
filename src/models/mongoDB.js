@@ -28,7 +28,8 @@ class DB {
       //  解决数据库多次连接的问题
       if (!that.dbClient) {
         MongoClient.connect(
-          `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.database}`,
+          // `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.database}`,
+          `mongodb://${dbConfig.host}`,
           { useNewUrlParser: true, useUnifiedTopology: true },
           (err, client) => {
             if (err) {

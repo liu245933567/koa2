@@ -30,8 +30,8 @@ exports.getCartoonDetail = async (ctx) => {
   }
 
   const sectioList = await db.findFormPage(
-    `cartoon_${collectionTag}_section_list`,
-    {},
+    'section_list',
+    {collectionTag},
     {
       pageIndex: pageIndex || 1,
       pageSize: pageSize || 20,
@@ -60,7 +60,7 @@ exports.getSectionDetail = async (ctx) => {
     throw new ApiError('PARAM_MISS');
   }
 
-  const sectionListRes = await db.find(`cartoon_${collectionTag}_section_list`, {sectionId});
+  const sectionListRes = await db.find('section_list', {sectionId, collectionTag});
 
   if (Object.prototype.toString.call(sectionListRes) === '[object Array]' && sectionListRes.length < 1) {
     throw new ApiError('PARAM_ERROR');

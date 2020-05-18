@@ -8,7 +8,7 @@ module.exports = {
   port: 3000,
   // 数据库配置
   dbConfig: {
-    host: '49.233.26.21:27017',
+    host: '127.0.0.1:27017',
     username: 'admin',
     password: '123456',
     database: 'cartoon',

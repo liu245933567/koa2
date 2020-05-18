@@ -1,5 +1,19 @@
 # 数据库操作记录
 
+```js
+db.cartoon_woshidashenxian_section_list.find({}).forEach(function (u) {
+  db.section_list.insert({
+    sectionTitle:u.sectionTitle,
+    sectionHref:u.sectionHref,
+    sectionId:u.sectionId,
+    imagesList:u.imagesList,
+    cartoonName: '我是大神仙',
+    collectionTag: 'woshidashenxian',
+    cartoonId: 196
+  })
+})
+```
+
 ### 2020-05-12
 
 1. 修改 cartoon_list 插入我是大神仙漫画信息
