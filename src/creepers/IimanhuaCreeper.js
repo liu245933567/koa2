@@ -1,11 +1,11 @@
 const superagent = require('superagent');
 const charset = require('superagent-charset');
 const cheerio = require('cheerio');
-const db = require('../mongoDB');
+const db = require('../models/mongoDB');
 
 charset(superagent);
 const moment = require('moment');
-const { othlogger, errlogger } = require('../logs/logger');
+const { othlogger, errlogger } = require('../utils/log');
 const cartoonCreeperTarget = require('./cartoonCreeperTarget');
 
 /**
@@ -77,7 +77,7 @@ class CartoonCreeper {
               cartoonId,
               collectionTag,
               description: description || '暂无简介',
-              cartoonName: cartoonName,
+              cartoonName,
               updataTime: moment().format('YYYY-MM-DD')
             };
             $('#play_0 ul li').each((i, v) => {
@@ -93,8 +93,10 @@ class CartoonCreeper {
                 sectionTitle,
                 sectionHref,
                 sectionId,
-                _id: sectionId,
-                imagesList: []
+                imagesList: [],
+                cartoonName,
+                collectionTag,
+                cartoonId
               });
             });
             othlogger.info(`获取${cartoonName}章节列表结束, 共${sectionsList.length}章`);
@@ -165,7 +167,7 @@ class CartoonCreeper {
     if (sectionsList.length < 1) {
       return;
     }
-    const storeSectionList = await db.find(`cartoon_${collectionTag}_section_list`, {});
+    const storeSectionList = await db.find('section_list', {collectionTag});
 
     if (!storeSectionList) {
       errlogger.info(`获取${this.cartoonName}数据库信息出错`);
@@ -174,7 +176,7 @@ class CartoonCreeper {
     }
     const needUpdataSectionList = sectionsList.filter(item =>
       storeSectionList.findIndex(storeItem =>
-        storeItem._id === item._id
+        storeItem.sectionId === item.sectionId
       ) === -1
     );
     // this.data.sectionsList = sectionsList;
@@ -203,7 +205,7 @@ class CartoonCreeper {
         return;
       }
       sectionInfo.imagesList = imagesList;
-      await db.insert(`cartoon_${this.collectionTag}_section_list`, sectionInfo);
+      await db.insert('section_list', sectionInfo);
       this.toGetImagesOfSingleSection();
     } else {
       this.afterGeting();

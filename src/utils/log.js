@@ -1,5 +1,5 @@
 const log4js = require('log4js');
-const {logConfig} = require('../config');
+const { logConfig } = require('../config');
 
 //加载配置文件
 log4js.configure(logConfig);
@@ -32,42 +32,59 @@ const formatReqLog = (req, resTime) => {
 };
 
 //格式化响应日志
-const formatRes = (ctx, resTime) => {
-  let logText = '';
-  //响应日志开始
+// const formatRes = (ctx, resTime) => {
+//   let logText = '';
+//   //响应日志开始
 
-  logText += '\n*************** response log start ***************\n';
-  //添加请求日志
-  logText += formatReqLog(ctx.request, resTime);
-  //响应状态码
-  logText += `response status: ${ctx.status}\n`;
-  //响应内容
-  logText += `response body: \n ${JSON.stringify(ctx.body)}\n`;
-  //响应日志结束
-  logText += '*************** response log end ***************\n';
+//   logText += '\n*************** response log start ***************\n';
+//   //添加请求日志
+//   logText += formatReqLog(ctx.request, resTime);
+//   //响应状态码
+//   logText += `response status: ${ctx.status}\n`;
+//   //响应内容
+//   logText += `response body: \n ${JSON.stringify(ctx.body)}\n`;
+//   //响应日志结束
+//   logText += '*************** response log end ***************\n';
 
-  return logText;
-};
+//   return logText;
+// };
+
+const formatRes = (ctx, resTime) => `
+  *************** response log start ***************
+  ${formatReqLog(ctx.request, resTime)}
+  response status: ${ctx.status}
+  response body: ${JSON.stringify(ctx.body)}
+  *************** response log end ***************
+`;
 
 //格式化错误日志
-const formatError = (ctx, err, resTime) => {
-  let logText = '';
-  //错误信息开始
+// const formatError = (ctx, err, resTime) => {
+//   let logText = '';
+//   //错误信息开始
 
-  logText += '\n' + '*************** error log start ***************' + '\n';
-  //添加请求日志
-  logText += formatReqLog(ctx.request, resTime);
-  //错误名称
-  logText += 'err name: ' + err.name + '\n';
-  //错误信息
-  logText += 'err message: ' + err.message + '\n';
-  //错误详情
-  logText += 'err stack: ' + err.stack + '\n';
-  //错误信息结束
-  logText += '*************** error log end ***************' + '\n';
+//   logText += '\n' + '*************** error log start ***************' + '\n';
+//   //添加请求日志
+//   logText += formatReqLog(ctx.request, resTime);
+//   //错误名称
+//   logText += 'err name: ' + err.name + '\n';
+//   //错误信息
+//   logText += 'err message: ' + err.message + '\n';
+//   //错误详情
+//   logText += 'err stack: ' + err.stack + '\n';
+//   //错误信息结束
+//   logText += '*************** error log end ***************' + '\n';
 
-  return logText;
-};
+//   return logText;
+// };
+
+const formatError = (ctx, err, resTime) => `
+  *************** error log start ***************
+  ${formatReqLog(ctx.request, resTime)}
+  err name: ${err.name}
+  err message: ${err.message}
+  err stack: ${err.stack}
+  *************** error log end ***************
+`;
 
 
 module.exports = {
@@ -86,5 +103,19 @@ module.exports = {
 
       errorLogger.error(formatError(ctx, error, resTime));
     }
+  },
+  othlogger: log4js.getLogger('resLogger'),
+  errlogger: log4js.getLogger('errorLogger'),
+  // 普通日志
+  logOrdinary(text) {
+    const resLogger = log4js.getLogger('resLogger');
+
+    resLogger.info(text);
+  },
+  // 普通错误日志
+  logOrdinaryErrror(errText) {
+    const errorLogger = log4js.getLogger('errorLogger');
+
+    errorLogger.error(errText);
   }
 };

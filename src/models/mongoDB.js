@@ -29,7 +29,6 @@ class DB {
       if (!that.dbClient) {
         MongoClient.connect(
           `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.database}`,
-          // `mongodb://${dbConfig.host}`,
           { useNewUrlParser: true, useUnifiedTopology: true },
           (err, client) => {
             if (err) {
