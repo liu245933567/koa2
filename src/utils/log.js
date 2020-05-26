@@ -86,36 +86,43 @@ const formatError = (ctx, err, resTime) => `
   *************** error log end ***************
 `;
 
-
-module.exports = {
-  //封装错误日志
-  logResponse(ctx, resTime) {
-    if (ctx) {
-      const resLogger = log4js.getLogger('resLogger');
-
-      resLogger.info(formatRes(ctx, resTime));
-    }
-  },
-  //封装响应日志
-  logError(ctx, error, resTime) {
-    if (ctx && error) {
-      const errorLogger = log4js.getLogger('errorLogger');
-
-      errorLogger.error(formatError(ctx, error, resTime));
-    }
-  },
-  othlogger: log4js.getLogger('resLogger'),
-  errlogger: log4js.getLogger('errorLogger'),
-  // 普通日志
-  logOrdinary(text) {
+//封装错误日志
+function logResponse(ctx, resTime) {
+  if (ctx) {
     const resLogger = log4js.getLogger('resLogger');
 
-    resLogger.info(text);
-  },
-  // 普通错误日志
-  logOrdinaryErrror(errText) {
+    resLogger.info(formatRes(ctx, resTime));
+  }
+}
+//封装响应日志
+function logError(ctx, error, resTime) {
+  if (ctx && error) {
     const errorLogger = log4js.getLogger('errorLogger');
 
-    errorLogger.error(errText);
+    errorLogger.error(formatError(ctx, error, resTime));
   }
+}
+const othlogger = log4js.getLogger('resLogger');
+
+const errlogger = log4js.getLogger('errorLogger');
+
+// 普通日志
+function logOrdinary(text) {
+  const resLogger = log4js.getLogger('resLogger');
+
+  resLogger.info(text);
+}
+// 普通错误日志
+function logOrdinaryErrror(errText) {
+  const errorLogger = log4js.getLogger('errorLogger');
+
+  errorLogger.error(errText);
+}
+export {
+  logResponse,
+  logError,
+  othlogger,
+  errlogger,
+  logOrdinary,
+  logOrdinaryErrror
 };

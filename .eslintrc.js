@@ -5,8 +5,8 @@ module.exports = {
   },
   'extends': 'eslint:recommended',
   'parserOptions': {
-    'sourceType': 'script',
-    // "sourceType": "module",
+    // 'sourceType': 'script',
+    'sourceType': 'module',
     'ecmaVersion': 7
   },
   'parser': 'babel-eslint',

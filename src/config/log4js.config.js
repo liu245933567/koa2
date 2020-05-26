@@ -1,4 +1,4 @@
-const path = require('path');
+import path from 'path';
 
 //日志根目录
 const baseLogPath = path.resolve(__dirname, '../logs');
@@ -17,7 +17,7 @@ const responseFileName = 'response';
 //响应日志输出完整路径
 const responseLogPath = `${baseLogPath}${responsePath}/${responseFileName}`;
 
-module.exports = {
+export default {
   'replaceConsole': true,
   'appenders': {
     'stdout': {//控制台输出

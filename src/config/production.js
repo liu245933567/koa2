@@ -1,7 +1,7 @@
-const logConfig = require('./log4js.config');
+import logConfig from './log4js.config';
 
 // 开发环境的配置内容
-module.exports = {
+export default {
   //环境名称
   env: 'production',
   //服务端口号

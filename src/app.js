@@ -1,11 +1,11 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const bodyParser = require('koa-bodyparser');
-const logger = require('koa-logger');
-const responseFormatter = require('./middlewares/response_formatter');
-const loger = require('./middlewares/loger');
-const {setHeader} = require('./middlewares/cors');
-const cartoon = require('./routes/cartoon');
+import Koa from 'koa';
+import Router from 'koa-router';
+import bodyParser from 'koa-bodyparser';
+import logger from 'koa-logger';
+import responseFormatter from './middlewares/response_formatter';
+import loger from './middlewares/loger';
+import {setHeader} from './middlewares/cors';
+import cartoon from './routes/cartoon';
 const app = new Koa();
 const router = new Router();
 
@@ -22,4 +22,5 @@ app.on('error', function(err, ctx) {
   logger.error('server error', err, ctx);
 });
 
-module.exports = app;
+// module.exports = app;
+export default app;

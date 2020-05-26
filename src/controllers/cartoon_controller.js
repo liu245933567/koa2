@@ -1,8 +1,8 @@
-const ApiError = require('../utils/ApiError');
-const db = require('../models/mongoDB');
+import ApiError from '../utils/ApiError';
+import db from '../models/mongoDB';
 
 //获取动漫列表
-exports.getCartoonList = async (ctx) => {
+export const getCartoonList = async (ctx) => {
   const cartoonList = await db.find('cartoon_list', {});
 
   ctx.body = {
@@ -11,7 +11,7 @@ exports.getCartoonList = async (ctx) => {
 };
 
 // 获取动漫详情
-exports.getCartoonDetail = async (ctx) => {
+export const getCartoonDetail = async (ctx) => {
   const {
     collectionTag,
     sortType,
@@ -50,7 +50,7 @@ exports.getCartoonDetail = async (ctx) => {
 };
 
 // 获取章节详情
-exports.getSectionDetail = async (ctx) => {
+export const getSectionDetail = async (ctx) => {
   const {
     sectionId,
     collectionTag

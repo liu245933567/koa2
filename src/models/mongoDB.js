@@ -1,11 +1,11 @@
 // 引入MongoDB数据库模块
-const MongoDB = require('mongodb'),
-  // 获得数据库客户端
-  MongoClient = MongoDB.MongoClient,
-  // 获取操作数据库ID的方法
-  ObjectID = MongoDB.ObjectID;
+import MongoDB from "mongodb";
+// 获得数据库客户端
+const MongoClient = MongoDB.MongoClient;
+// 获取操作数据库ID的方法
+const ObjectID = MongoDB.ObjectID;
 // 引入数据库的配置文件
-const { dbConfig } = require('../config');
+import { dbConfig } from '../config';
 
 class DB {
   // 单例模式，解决多次实例化实例不共享的问题
@@ -16,7 +16,7 @@ class DB {
     return DB.instance;
   }
   constructor() {
-    this.dbClient = '';
+    this.dbClient = "";
     // 实例化的时候就连接数据库，解决第一次查询太久的问题
     this.connect();
   }
@@ -37,7 +37,8 @@ class DB {
               that.dbClient = client.db(dbConfig.database);
               resolve(that.dbClient);
             }
-          });
+          }
+        );
       } else {
         resolve(that.dbClient);
       }
@@ -56,7 +57,6 @@ class DB {
           }
           resolve(doc);
         });
-
       });
     });
   }
@@ -65,9 +65,9 @@ class DB {
     const config = {
       pageIndex: 1,
       pageSize: 20,
-      sortKey: '_id',
+      sortKey: "_id",
       sortType: 1,
-      ...inputConfig
+      ...inputConfig,
     };
 
     const skipNum = config.pageSize * (config.pageIndex - 1);
@@ -88,7 +88,6 @@ class DB {
           }
           resolve(doc);
         });
-
       });
     });
   }
@@ -96,15 +95,19 @@ class DB {
   update(collectionName, oldJson, newJson) {
     return new Promise((resolve, reject) => {
       this.connect().then((db) => {
-        db.collection(collectionName).updateOne(oldJson, {
-          $set: newJson
-        }, (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result);
+        db.collection(collectionName).updateOne(
+          oldJson,
+          {
+            $set: newJson,
+          },
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
           }
-        });
+        );
       });
     });
   }
@@ -141,6 +144,5 @@ class DB {
     return new ObjectID(id);
   }
 }
-
 
 module.exports = DB.getInstance();

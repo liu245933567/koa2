@@ -1,7 +1,7 @@
-const logConfig = require('./log4js.config');
+import logConfig from './log4js.config';
 
 // 测试环境的配置内容
-module.exports = {
+export default {
   env: 'test', //环境名称
   port: 3001, //服务端口号
   dbConfig: {

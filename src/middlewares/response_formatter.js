@@ -1,4 +1,4 @@
-const ApiError = require('../utils/ApiError');
+import ApiError from '../utils/ApiError';
 
 /**
  * 在app.use(router)之前调用
@@ -45,4 +45,4 @@ const urlFilter = (pattern) => async (ctx, next) => {
   }
 };
 
-module.exports = urlFilter;
+export default urlFilter;

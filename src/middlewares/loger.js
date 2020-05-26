@@ -1,6 +1,6 @@
 const logUtil = require('../utils/log');
 
-module.exports = async (ctx, next) => {
+export default async (ctx, next) => {
   //响应开始时间
   const start = new Date();
   //响应间隔时间
