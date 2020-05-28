@@ -32,7 +32,7 @@ module.exports = {
     // if while function 后面的{必须与if在同一行，java风格。
     'brace-style': [2, '1tbs', { 'allowSingleLine': true }],
     // 双峰驼命名格式
-    'camelcase': 2,
+    'camelcase': 0,
     // 控制逗号前后的空格
     'comma-spacing': [2, { 'before': false, 'after': true }],
     // 控制逗号在行尾出现还是在行首出现
