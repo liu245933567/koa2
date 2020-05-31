@@ -3,22 +3,30 @@ module.exports = {
     'es6': true,
     'node': true
   },
-  'extends': 'eslint:recommended',
+  'extends': [
+    // 'prettier',
+    // 'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    // 'plugin:@typescript-eslint/recommended',
+    // 'prettier/@typescript-eslint'
+  ],
   'parserOptions': {
-    // 'sourceType': 'script',
     'sourceType': 'module',
-    'ecmaVersion': 7
+    // "plugins": ['@typescript-eslint'],
+    'ecmaVersion': 7,
+    "project": "./tsconfig.json"
   },
-  'parser': 'babel-eslint',
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   'rules': {
     // 数组和对象键值对最后一个逗号， never参数：不能带末尾的逗号, always参数：必须带末尾的逗号，
-    // always-multiline：多行模式必须带逗号，单行模式不能带逗号
+    // always-multiline 多行模式必须带逗号，单行模式不能带逗号
     'comma-dangle': [2, 'never'],
     // 指定数组的元素之间要以空格隔开(,后面)，
     // never参数：[ 之前和 ] 之后不能带空格，
     // always参数：[ 之前和 ] 之后必须带空格
     'array-bracket-spacing': [2, 'never'],
-    'indent': ['error', 2],
+    // 'indent': [1, 2],
     'no-empty-function': 'error',
     'no-useless-return': 'error',
     'global-require': 'error',
@@ -59,7 +67,7 @@ module.exports = {
     //    参数： allowKeywords：true 使用保留字做属性名时，只能使用.方式取属性
     //                          false 使用保留字做属性名时, 只能使用[]方式取属性 e.g [2, {"allowKeywords": false}]
     //           allowPattern:  当属性名匹配提供的正则表达式时，允许使用[]方式取值,否则只能用.号取值 e.g [2, {"allowPattern": "^[a-z]+(_[a-z]+)+$"}]
-    'dot-notation': [2, {'allowKeywords': true}],
+    'dot-notation': [2, { 'allowKeywords': true }],
     // 文件末尾强制换行
     'eol-last': 2,
     // 使用 === 替代 ==
@@ -123,7 +131,7 @@ module.exports = {
     'linebreak-style': [0, 'windows'], //换行风格
     'no-multi-spaces': 1, //不能用多余的空格
     'no-multi-str': 2, //字符串不能用\换行
-    'no-multiple-empty-lines': [1, {'max': 2}], //空行最多不能超过2行
+    'no-multiple-empty-lines': [1, { 'max': 2 }], //空行最多不能超过2行
     'no-native-reassign': 2, //不能重写native对象
     'no-negated-in-lhs': 2, //in 操作符的左边不能有!
     'no-nested-ternary': 0, //禁止使用嵌套的三目运算
@@ -165,7 +173,23 @@ module.exports = {
     'no-unneeded-ternary': 2, //禁止不必要的嵌套 var isYes = answer === 1 ? true : false;
     'no-unreachable': 2, //不能有无法执行的代码
     'no-unused-expressions': 2, //禁止无用的表达式
-    'no-unused-vars': [2, {'vars': 'all', 'args': 'after-used'}], //不能有声明后未被使用的变量或参数
+    "no-unused-vars": [2, {
+      "vars": "all",
+      "varsIgnorePattern": "Taro",
+      "args": "none",
+      "ignoreRestSiblings": true,
+      "argsIgnorePattern": "^_",
+      "caughtErrors": "none"
+    }],
+    "@typescript-eslint/no-unused-vars": [2, {
+      "vars": "all",
+      "varsIgnorePattern": "Taro",
+      "args": "none",
+      "ignoreRestSiblings": true,
+      "argsIgnorePattern": "^_",
+      "caughtErrors": "none"
+    }],
+    // 'no-unused-vars': [2, { 'vars': 'all', 'args': 'after-used' }], //不能有声明后未被使用的变量或参数
     'no-use-before-define': 2, //未定义前不能使用
     'no-useless-call': 2, //禁止不必要的call和apply
     'no-void': 2, //禁用void操作符
@@ -208,7 +232,7 @@ module.exports = {
     'id-match': 0, //命名检测
     'require-yield': 0, //生成器函数必须有yield
     'semi': [2, 'always'], //语句强制分号结尾
-    'semi-spacing': [0, {'before': false, 'after': true}], //分号前后空格
+    'semi-spacing': [0, { 'before': false, 'after': true }], //分号前后空格
     'sort-vars': 0, //变量声明时排序
     'space-after-keywords': [0, 'always'], //关键字后面是否要空一格
     'space-before-blocks': [2, 'always'], //不以新行开始的块{前面要不要有空格
@@ -225,6 +249,6 @@ module.exports = {
     'vars-on-top': 2, //var必须放在作用域顶部
     'wrap-iife': [2, 'inside'], //立即执行函数表达式的小括号风格
     'wrap-regex': 0, //正则表达式字面量用小括号包起来
-    'yoda': [2, 'never'] //禁止尤达条件
+    'yoda': [2, 'never'], //禁止尤达条件
   }
 };
