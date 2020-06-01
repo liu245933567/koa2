@@ -2,15 +2,13 @@
 
 ## 动漫
 
-### 动漫列表查询
+动漫列表查询
 
-请求 URL: /cartoon/cartoonList.json
+ 请求 URL
+> /cartoon/cartoonList.json
 
----
-
-请求方式: POST
-
----
+ 请求方式
+> POST
 
 | 参数名 | 类型 | 说明 |
 | :----- | ---: | :--: |
