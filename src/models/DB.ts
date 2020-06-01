@@ -1,19 +1,12 @@
 import * as mysql from 'mysql';
-import {Pool} from 'mysql';
+import { Pool } from 'mysql';
+import CONF from '../config';
 
 class DB {
   pool: Pool;
-  // connection: Promise<PoolConnection>;
   constructor() {
-    this.pool = mysql.createPool({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'liu199699',
-      database: 'runoob',
-      port: 3306
-    });
+    this.pool = mysql.createPool(CONF.mysql);
     this.getConnection = this.getConnection.bind(this);
-    // this.connection = this.getConnection();
   }
 
   getConnection(sql: string) {
@@ -37,8 +30,6 @@ class DB {
       });
     });
   }
-
-
 }
 
 export default DB;

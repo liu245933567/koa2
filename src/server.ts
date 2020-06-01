@@ -7,6 +7,7 @@ import { setHeader } from './middlewares/cors';
 import loger from './middlewares/loger';
 import cartoon from './routes/cartoon';
 import logConfig from './config/log4js.config';
+import CONF from './config';
 
 const app = new Koa();
 const router = new Router();
@@ -18,7 +19,7 @@ router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
 app.use(responseFormatter('^/cartoon'));
 app.use(router.routes());
 
-app.listen(8080, () => {
+app.listen(CONF.port, () => {
   if (logConfig.baseLogPath) {
     const confirmPath = (pathStr:string) => {
       // eslint-disable-next-line no-sync
