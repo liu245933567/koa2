@@ -1,9 +1,10 @@
 import ApiError from '../utils/ApiError';
+import {Context, Next} from 'koa';
 
 /**
  * 在app.use(router)之前调用
  */
-const responseFormatter = (ctx) => {
+const responseFormatter = (ctx:Context) => {
   //如果有返回数据，将返回数据添加到data中
   if (ctx.body) {
     ctx.body = {
@@ -21,7 +22,7 @@ const responseFormatter = (ctx) => {
   }
 };
 
-const urlFilter = (pattern) => async (ctx, next) => {
+const urlFilter = (pattern:string) => async (ctx:Context, next:Next) => {
   const reg = new RegExp(pattern);
 
   try {
