@@ -1,8 +1,8 @@
-const devConf: CONF.Base = {
+const devConf = {
   env: 'development',
   port: 3000,
   mysql: {
-    host: '49.233.26.21',
+    host: 'localhost',
     port: 3306,
     user: 'root',
     password: 'liu199699',

@@ -1,4 +1,4 @@
-const prodConf: CONF.Base = {
+const prodConf = {
   env: 'production',
   port: 3000,
   mysql: {

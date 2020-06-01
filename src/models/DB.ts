@@ -1,11 +1,11 @@
 import * as mysql from 'mysql';
 import { Pool } from 'mysql';
-import CONF from '../config';
+import conf from '../config';
 
 class DB {
   pool: Pool;
   constructor() {
-    this.pool = mysql.createPool(CONF.mysql);
+    this.pool = mysql.createPool(conf.mysql);
     this.getConnection = this.getConnection.bind(this);
   }
 
