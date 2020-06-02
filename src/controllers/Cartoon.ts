@@ -28,6 +28,7 @@ export const getCartoonDetail = async (ctx:Context) => {
 };
 
 // 获取章节详情
+// TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
 export const getSectionDetail = async (ctx:Context) => {
   const {
     sectionId,
