@@ -1,14 +1,24 @@
 import DB from '../DB';
-interface DetailReq {
-  (req: { cartoonId: number }): Promise<{ cartoonInfo: any; sectionList: any }>;
-}
+import { formatDateToYYYYMMDD } from '../../utils/moment';
+
 class CaroonModel extends DB {
   // 获取动漫列表
   async getCartoonList() {
-    const sql = 'SELECT id, cartoonName, description FROM cartoon_list;';
+    const sql =
+      'SELECT id, cartoonName, description, updataTime FROM cartoon_list;';
     const cartoonList = await this.getConnection(sql);
 
-    return cartoonList || [];
+    return (cartoonList || []).map((item) => {
+      let { cartoonName, description, id, updataTime } = item;
+
+      updataTime = formatDateToYYYYMMDD(updataTime);
+      return {
+        cartoonName,
+        description,
+        id,
+        updataTime
+      };
+    });
   }
 
   // 获取动漫详情
@@ -45,7 +55,9 @@ class CaroonModel extends DB {
 
     return {
       ...sectionInfo || {},
-      imagesList: sectionImages.map((item) => `http://res.img.fffimage.com/${item.imageHref}`)
+      imagesList: sectionImages.map(
+        (item) => `http://res.img.fffimage.com/${item.imageHref}`
+      )
     };
   }
 }
