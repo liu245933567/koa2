@@ -23,7 +23,7 @@ export const getCartoonDetail = async (ctx:Context) => {
   const cartoonDetail = await cartoonModel.getCartoonDetail({cartoonId});
 
   ctx.body = {
-    cartoonDetail
+    ...cartoonDetail
   };
 };
 
@@ -37,9 +37,9 @@ export const getSectionDetail = async (ctx:Context) => {
   if (!cartoonId || !sectionId) {
     throw new ApiError('PARAM_MISS');
   }
-  const sectionDetail = await cartoonModel.getSectionDetail({cartoonId, sectionId});
+  const sectionInfo = await cartoonModel.getSectionDetail({cartoonId, sectionId});
 
   ctx.body = {
-    sectionDetail
+    sectionInfo
   };
 };

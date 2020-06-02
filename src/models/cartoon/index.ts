@@ -5,17 +5,27 @@ class CaroonModel extends DB {
   // 获取动漫列表
   async getCartoonList() {
     const sql =
-      'SELECT id, cartoonName, description, updataTime FROM cartoon_list;';
-    const cartoonList = await this.getConnection(sql);
+      'SELECT id, cartoonName, description, updataTime, coverImage FROM cartoon_list;';
+
+    type CartoonInfo = {
+      id: number;
+      cartoonName: string;
+      description: string;
+      updataTime: string;
+      coverImage: string;
+    }
+    const cartoonList: Array<CartoonInfo> = await this.getConnection(sql);
 
     return (cartoonList || []).map((item) => {
-      let { cartoonName, description, id, updataTime } = item;
+
+      let { cartoonName, description, id: cartoonId, updataTime, coverImage } = item;
 
       updataTime = formatDateToYYYYMMDD(updataTime);
       return {
         cartoonName,
         description,
-        id,
+        cartoonId,
+        coverImage,
         updataTime
       };
     });
