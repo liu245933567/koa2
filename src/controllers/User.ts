@@ -5,8 +5,8 @@ const SECRET = 'shared-secret';
 
 export const login = async (ctx: Context) => {
   const user = {
-    name: 'zhangsan',
-    password: 'wbfuoqefhiqf'
+    phoneNo: 17862514397,
+    password: '199699'
   };
 
   const token = jwt.sign(user, SECRET, { expiresIn: '1h' });
