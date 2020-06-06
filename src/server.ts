@@ -1,37 +1,19 @@
-import * as Koa from 'koa';
-import * as Router from 'koa-router';
-import * as bodyParser from 'koa-bodyparser';
 import * as fs from 'fs';
-import * as path from 'path';
-import * as staticServer from 'koa-static';
-import responseFormatter from './middlewares/responseFormatter';
-import { setHeader, cors } from './middlewares/cors';
-import loger from './middlewares/loger';
-import { verify } from './middlewares/auth';
-import cartoon from './routes/cartoon';
-import user from './routes/user';
+import * as http from 'http';
+import mountSocket from './socket';
 import logConfig from './config/log4js.config';
 import conf from './config';
-
-const app = new Koa();
-const router = new Router();
-
-// app.use(setHeader);
-app.use(cors);
-app.use(bodyParser());
-app.use(staticServer(path.join(__dirname, './public/')));
-app.use(loger);
-app.use(verify);
-
-router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
-router.use('/user', user.routes(), user.allowedMethods());
-
-app.use(responseFormatter('^/cartoon'));
-
-app.use(router.routes());
+import app from './app';
 
 
-app.listen(conf.port, () => {
+//如果原来是用app.listen(3000);来启动服务，现在要改成用http来启动server
+const server = http.createServer(app);
+
+//挂载socket
+mountSocket(server);
+
+
+server.listen(conf.port, () => {
   if (logConfig.baseLogPath) {
     const confirmPath = (pathStr: string) => {
       // eslint-disable-next-line no-sync
@@ -46,7 +28,5 @@ app.listen(conf.port, () => {
     confirmPath(logConfig.appenders.errorLogger.path);
     confirmPath(logConfig.appenders.resLogger.path);
   }
+  console.log('服务启动成功');
 });
-
-
-console.log('服务启动成功');
