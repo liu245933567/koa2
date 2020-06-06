@@ -5,10 +5,13 @@ import userModel from '../models/user';
 
 const SECRET = 'shared-secret';
 
-export const sign = (ctx: Context, info: any) => {
-  const token = jwt.sign(info, SECRET, { expiresIn: '1h' });
+export const sign = (
+  ctx: Context,
+  info: { phoneNo: number; password: string }
+) => {
+  const token = jwt.sign(info, SECRET, { expiresIn: '2 days' });
 
-  ctx.set('Authorization', token);
+  // ctx.set('Authorization', token);
   ctx.cookies.set('token', token, {
     domain: '.yanyuge.xyz', // 写cookie所在的域名
     path: '/', // 写cookie所在的路径
@@ -20,62 +23,45 @@ export const sign = (ctx: Context, info: any) => {
 };
 
 export const verify = async (ctx: Context, next: Next) => {
-  console.log(ctx.cookies.get('token'));
-  const token = ctx.cookies.get('token');
+  if (
+    ctx.originalUrl.indexOf('login.json') < 0 &&
+    ctx.originalUrl.indexOf('register.json') < 0
+  ) {
+    const token = ctx.cookies.get('token');
+    let isVerifyed = true;
 
-  // userModel.register({
-  //   phoneNo: 17862514397,
-  //   password: '199699',
-  //   email: '245933567@qq.com',
-  //   nickname: '山有扶苏',
-  //   gender: 'male',
-  //   headPortrait: 'http://localhost:3000/images/test.png',
-  //   brithday: '1996-10-20'
-  // });
-  let isVerifyed = true;
+    if (token) {
+      let phoneNo: number = 111,
+        password: string = '111';
 
-  if (token) {
-    let phoneNo:number = 111, password:string = '111';
-
-    jwt.verify(token, SECRET, (err, decoded:any) => {
-      if (err) {
-        isVerifyed = false;
-      } else {
-        phoneNo = decoded.phoneNo;
-        password = decoded.password;
+      jwt.verify(token, SECRET, (err, decoded: any) => {
+        if (err) {
+          isVerifyed = false;
+        } else {
+          phoneNo = decoded.phoneNo;
+          password = decoded.password;
+        }
+      });
+      if (isVerifyed) {
+        isVerifyed = await userModel.isVerifyedToken({ phoneNo, password });
       }
-    });
-    isVerifyed = await userModel.isVerifyedToken({ phoneNo, password });
+    } else {
+      isVerifyed = false;
+    }
+    if (isVerifyed) {
+      await next();
+    } else {
+      ctx.status = 401;
+      ctx.body = {
+        isOk: false,
+        code: 401,
+        msg: '请先登录~'
+      };
+    }
   } else {
-    isVerifyed = false;
+    await next();
   }
-  if (isVerifyed) {
-    next();
-  } else {
-    ctx.status = 401;
-    ctx.body = {
-      code: 401,
-      msg: '请先登录~'
-    };
-  }
-
-  // return new Promise((resolve) => {
-  //   const re = true;
-
-  //   setTimeout(() => {
-  //     resolve(re);
-  //   }, 1000);
-  // });
 };
-
-//路由权限控制 除了path里的路径不需要验证token 其他都要
-export const koaJwtVerify = koaJwt({
-  secret: SECRET
-  // passthrough: true,
-  // isRevoked: verify
-}).unless({
-  path: [/login.json$/, /^\/register/]
-});
 
 // 中间件对token进行验证
 export const catchTokenVerify = async (ctx: Context, next: Next) => {
@@ -91,6 +77,15 @@ export const catchTokenVerify = async (ctx: Context, next: Next) => {
     }
   });
 };
+
+//路由权限控制 除了path里的路径不需要验证token 其他都要
+export const koaJwtVerify = koaJwt({
+  secret: SECRET
+  // passthrough: true,
+  // isRevoked: verify
+}).unless({
+  path: [/login.json$/, /^\/register/]
+});
 
 // export const verify = (ctx: Context, decodedToken: object, token: string) => {
 //   console.log(ctx, decodedToken, token);

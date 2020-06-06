@@ -1,25 +1,79 @@
 import { Context } from 'koa';
-import * as jwt from 'jsonwebtoken';
-const SECRET = 'shared-secret';
+import userModel from '../models/user';
+import { sign } from '../middlewares/auth';
+import {
+  isMobile,
+  isEmail,
+  isYYYYMMDD,
+  isGender,
+  checkPwd
+} from '../utils/rexp';
+
 // 用户登录
-
 export const login = async (ctx: Context) => {
-  const user = {
-    phoneNo: 17862514397,
-    password: '199699'
-  };
+  let isOk = true;
+  let message = '登录成功~';
+  const { phoneNo, password } = ctx.request.body;
 
-  const token = jwt.sign(user, SECRET, { expiresIn: '1h' });
+  if (!phoneNo || !password) {
+    isOk = false;
+    message = '请填写完整信息';
+  }
+  if (isOk) {
+    const isVerifyed = await userModel.isVerifyedToken({ phoneNo, password });
 
-  ctx.cookies.set('token', token, {
-    domain: '.yanyuge.xyz', // 写cookie所在的域名
-    path: '/', // 写cookie所在的路径
-    maxAge: 1000 * 60 * 60 * 24, // cookie有效时长
-    expires: new Date('2029-2-12'), // cookie失效时间
-    httpOnly: true, // 是否只用于http请求中获取
-    overwrite: true // 是否允许重写
-  });
+    if (!isVerifyed) {
+      isOk = false;
+      message = '请检查用户账号与密码是否匹配';
+    } else {
+      sign(ctx, { phoneNo, password });
+    }
+  }
+
   ctx.body = {
-    token
+    isOk,
+    message
   };
+};
+
+// 用户注册
+export const register = async (ctx: Context) => {
+  const {
+    phoneNo,
+    password,
+    email,
+    nickname,
+    gender,
+    brithday
+  } = ctx.request.body;
+  let res = {
+    isOk: true,
+    message: '注册成功'
+  };
+  const isVerifyed =
+    phoneNo &&
+    isMobile(phoneNo) &&
+    password &&
+    checkPwd(password) &&
+    (!email || email && isEmail(email)) &&
+    (!gender || gender && isGender(gender)) &&
+    (!brithday || brithday && isYYYYMMDD(brithday));
+
+  if (isVerifyed) {
+    res = await userModel.register({
+      phoneNo,
+      password,
+      email: email || 'NULL',
+      nickname: nickname || phoneNo,
+      gender: gender || 'male',
+      brithday: brithday || '1991-12-24'
+    });
+  } else {
+    res = {
+      isOk: false,
+      message: '请查看填写信息是否正确'
+    };
+  }
+  console.log(res);
+  ctx.body = res;
 };
