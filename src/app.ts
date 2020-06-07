@@ -9,9 +9,9 @@ import {
   cors
 } from './middlewares/cors';
 import loger from './middlewares/loger';
-import { verify } from './middlewares/auth';
-import cartoon from './routes/cartoon';
-import user from './routes/user';
+// import { verify } from './middlewares/auth';
+// import cartoon from './routes/cartoon';
+// import user from './routes/user';
 
 const app = new Koa();
 const router = new Router();
@@ -21,10 +21,10 @@ app.use(cors);
 app.use(bodyParser());
 app.use(staticServer(path.join(__dirname, './public/')));
 app.use(loger);
-app.use(verify);
+// app.use(verify);
 
-router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
-router.use('/user', user.routes(), user.allowedMethods());
+// router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
+// router.use('/user', user.routes(), user.allowedMethods());
 
 app.use(responseFormatter('^/cartoon'));
 

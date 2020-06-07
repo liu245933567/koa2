@@ -3,7 +3,7 @@ import {
   getCartoonList,
   getCartoonDetail,
   getSectionDetail
-} from '../../controllers/Cartoon';
+} from '../controllers/Cartoon';
 const router = new Router();
 
 router.post('/cartoonList.json', getCartoonList);
