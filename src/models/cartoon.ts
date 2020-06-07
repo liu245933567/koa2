@@ -1,4 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
+import {SectionDocument} from './section';
 
 const CartoonSchema = new Schema({
   _id: {
@@ -36,7 +37,7 @@ export interface CartoonDocument extends Document {
   // 动漫头像
   coverImage: string;
   // 动漫章节列表
-  sections: number[];
+  sections: number[] | SectionDocument[];
 }
 
 /**
@@ -52,7 +53,6 @@ Cartoon.findOne({}, (err, data) => {
       cartoonName: '无',
       updataTime: new Date(),
       coverImage: '无',
-      // 动漫章节列表
       sections: [1]
     });
   }

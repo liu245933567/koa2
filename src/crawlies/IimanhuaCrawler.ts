@@ -199,8 +199,8 @@ class Crawler {
       const { _id } = cartoonInfo;
       const cartoonInfoFromDB = await Cartoon.findById(_id);
       // 数据库中所存的 sectionId 集合
-      const sectionIdsFromDB: number[] =
-        cartoonInfoFromDB && cartoonInfoFromDB.sections || [];
+      const sectionIdsFromDB =
+        (cartoonInfoFromDB && cartoonInfoFromDB.sections || []) as number[];
       // 未存入数据库中的 section
       const sectionInfoNotInsert = cartoonInfo.sectionsList.filter(
         (item) => !sectionIdsFromDB.includes(item.sectionId)

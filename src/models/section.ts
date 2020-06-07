@@ -32,10 +32,7 @@ export interface SectionDocument extends Document {
  */
 const Section = model<SectionDocument>('Section', SectionSchema);
 
-console.log('查询了吗');
-
 Section.findOne({}, (err:any, data) => {
-  console.log(err);
   if (!data) {
     Section.create({
       _id: 1,
