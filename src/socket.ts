@@ -24,7 +24,7 @@ export default function mountSocket(server: Server) {
           });
         });
 
-        crawler.getData();
+        crawler.getListData();
       }
     });
 

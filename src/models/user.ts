@@ -61,4 +61,17 @@ export interface UserDocument extends Document {
  */
 const User = model<UserDocument>('User', UserSchema);
 
+// User.findOne({}, (err, data) => {
+//   if (!data) {
+//     Cartoon.create({
+//       _id: 1,
+//       description: '无',
+//       cartoonName: '无',
+//       updataTime: new Date(),
+//       coverImage: '无',
+//       sections: [1]
+//     });
+//   }
+// });
+
 export default User;

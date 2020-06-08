@@ -4,6 +4,7 @@ import * as charset from 'superagent-charset';
 import * as cheerio from 'cheerio';
 import Section from '../models/section';
 import Cartoon from '../models/cartoon';
+import Crawlers from '../models/crawler';
 
 charset(superagent);
 
@@ -46,8 +47,12 @@ class Crawler {
   /**
    * 获取动漫信息
    */
-  getCartoonInfo(): Promise<CartoonInfo | null> {
-    const { cartoonName, url, messageCall } = this;
+  getCartoonInfo(crawler:{
+    name: string;
+    href: string;
+  }): Promise<CartoonInfo | null> {
+    const { messageCall } = this;
+    const cartoonName = crawler.name, url = crawler.href;
 
     return new Promise((resolve) => {
       // othlogger.info(`开始获取${cartoonName}章节列表 ~`);
@@ -192,8 +197,12 @@ class Crawler {
     }
   }
 
-  async getData() {
-    let cartoonInfo = await this.getCartoonInfo();
+  /** 开始获取动漫信息 */
+  async getData(crawler:{
+    name: string;
+    href: string;
+  }) {
+    let cartoonInfo = await this.getCartoonInfo(crawler);
 
     if (cartoonInfo) {
       const { _id } = cartoonInfo;
@@ -259,6 +268,34 @@ class Crawler {
           message: `《${cartoonInfo.cartoonName}》已是最新章节, 无需更新`
         });
       }
+    }
+  }
+
+  async getListData() {
+    const crawlerList = await Crawlers.find({type: 'cartoon'}, {name: 1, href: 1});
+
+    if (crawlerList) {
+      const crawlerGen = function *() {
+        for (let i = 0; i< crawlerList.length; i++) {
+          yield crawlerList[i];
+        }
+      };
+      const crawlersGenIns = crawlerGen();
+      const toGet = async () =>{
+        const crawler = crawlersGenIns.next().value;
+
+        if (crawler) {
+          await this.getData(crawler);
+          toGet();
+        } else {
+          this.messageCall({
+            type: 'info',
+            message: '全部获取完毕'
+          });
+        }
+      };
+
+      toGet();
     }
   }
 }

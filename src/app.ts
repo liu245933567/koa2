@@ -11,6 +11,7 @@ import {
 import loger from './middlewares/loger';
 // import { verify } from './middlewares/auth';
 import cartoon from './routes/cartoon';
+import admin from './routes/admin';
 // import user from './routes/user';
 
 const app = new Koa();
@@ -24,9 +25,10 @@ app.use(loger);
 // app.use(verify);
 
 router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
+router.use('/admin', admin.routes(), admin.allowedMethods());
 // router.use('/user', user.routes(), user.allowedMethods());
 
-app.use(responseFormatter('^/cartoon'));
+app.use(responseFormatter('^/'));
 
 app.use(router.routes());
 
