@@ -65,6 +65,7 @@ class Crawler {
         .buffer(true)
         // @ts-ignore
         .charset('gb2312')
+        // @ts-ignore
         .end((err, res) => {
           if (err) {
             // errlogger.info(`获取${cartoonName}章节列表失败`);
@@ -151,8 +152,10 @@ class Crawler {
       });
       superagent
         .get(sectionInfo.sectionHref)
+        // @ts-ignore
         .charset('gb2312')
         .buffer(true)
+        // @ts-ignore
         .end((err, res) => {
           let photosr: string[] = [];
 

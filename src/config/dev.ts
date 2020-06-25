@@ -1,4 +1,6 @@
-const devConf = {
+import { Base } from './conf.types';
+
+const devConf: Base = {
   env: 'development',
   port: 3000,
   mysql: {
@@ -15,7 +17,8 @@ const devConf = {
     database: 'cartoon',
     useNewUrlParser: true,
     useUnifiedTopology: true
-  }
+  },
+  staticPath: 'F:special'
 };
 
 export default devConf;

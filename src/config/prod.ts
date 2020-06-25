@@ -1,4 +1,6 @@
-const prodConf = {
+import { Base } from './conf.types';
+
+const prodConf: Base = {
   env: 'production',
   port: 3000,
   mysql: {
@@ -15,7 +17,8 @@ const prodConf = {
     database: 'cartoon',
     useNewUrlParser: true,
     useUnifiedTopology: true
-  }
+  },
+  staticPath: 'F:special'
 };
 
 export default prodConf;
