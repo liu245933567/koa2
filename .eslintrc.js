@@ -31,7 +31,7 @@ module.exports = {
     'no-useless-return': 'error',
     'global-require': 'error',
     'block-spacing': ['error', 'always'],
-    'lines-around-comment': ['error', { 'beforeBlockComment': true }],
+    'lines-around-comment': [0, { 'beforeBlockComment': true }],
     'newline-before-return': 0,
     'no-multi-assign': 'error',
     'keyword-spacing': 'error',
