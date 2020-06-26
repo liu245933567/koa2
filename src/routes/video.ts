@@ -3,6 +3,6 @@ import { getVideoList, getCategories } from '../controllers/Video';
 const router = new Router();
 
 router.post('/videoList.json', getVideoList);
-router.post('/getVideoCategories.json', getCategories);
+router.post('/videoCategories.json', getCategories);
 
 export default router;
