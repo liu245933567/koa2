@@ -17,6 +17,26 @@ interface FilesInfo {
   previewImgUrl: string;
 }
 
+/** 找到所有文件夹 */
+export async function findDirs() {
+  const dir = config.staticPath;
+  const files = await fs.promises.readdir(dir);
+  /** 文件夹中的文件信息列表 */
+  const ret: string[] = await files.reduce(async (promise, curName) => {
+    return promise.then(async (last) => {
+      const pathname = path.join(dir, curName);
+      const info = await fs.promises.stat(pathname);
+
+      if (info && info.isDirectory()) {
+        last.push(curName);
+      }
+      return last;
+    });
+  }, Promise.resolve([] as string[]));
+
+  return ret;
+}
+
 /**
  * 生成预览图片文件夹
  * @param previewPath 图片预览保存文件夹路径
@@ -37,7 +57,11 @@ async function makePreviewPictureDir(previewPath: string) {
  * @param previewName 生成的文件名称
  * @param previewPath 图片预览保存文件夹路径
  */
-function makePreviewPicture(videoPath: string, previewName: string, previewPath: string) {
+function makePreviewPicture(
+  videoPath: string,
+  previewName: string,
+  previewPath: string
+) {
   return new Promise((resolve, reject) => {
     ffmpeg(videoPath)
       .on('error', (err: Error) => {
@@ -76,38 +100,41 @@ export async function mapDir(dirPath: string) {
 
   await makePreviewPictureDir(previewPath);
   /** 文件夹中的文件信息列表 */
-  const ret: FilesInfo[] = await files.reduce(async (promise, videoFullName) => {
-    return promise.then(async (last) => {
-      const pathname = path.join(dir, videoFullName);
-      const info = await fs.promises.stat(pathname);
-      /** 文件拓展名 */
-      const extname = path.extname(pathname);
-      /** 是否是视频文件 */
-      const isVideo = info.isFile() && ['.mp4'].includes(extname);
+  const ret: FilesInfo[] = await files.reduce(
+    async (promise, videoFullName) => {
+      return promise.then(async (last) => {
+        const pathname = path.join(dir, videoFullName);
+        const info = await fs.promises.stat(pathname);
+        /** 文件拓展名 */
+        const extname = path.extname(pathname);
+        /** 是否是视频文件 */
+        const isVideo = info.isFile() && ['.mp4'].includes(extname);
 
-      if (info && isVideo) {
-        const { birthtime } = info;
-        const fileName = videoFullName.replace(new RegExp(extname, 'ig'), '');
-        const previewName = `${fileName}.jpeg`;
-        // eslint-disable-next-line no-sync
-        const previewIsExists = fs.existsSync(path.join(previewPath, previewName));
+        if (info && isVideo) {
+          const { birthtime } = info;
+          const fileName = videoFullName.replace(new RegExp(extname, 'ig'), '');
+          const previewName = `${fileName}.jpeg`;
+          // eslint-disable-next-line no-sync
+          const previewIsExists = fs.existsSync(
+            path.join(previewPath, previewName)
+          );
 
-        if (!previewIsExists) {
-          await makePreviewPicture(pathname, previewName, previewPath);
+          if (!previewIsExists) {
+            await makePreviewPicture(pathname, previewName, previewPath);
+          }
+          last.push({
+            fileName,
+            // pathname,
+            videoUrl: `/${dirPath}/${videoFullName}`,
+            previewImgUrl: `/${previewDir}/${previewName}`,
+            createdTime: birthtime.getTime()
+          });
         }
-        last.push({
-          fileName,
-          // pathname,
-          videoUrl: `/${dirPath}/${videoFullName}`,
-          previewImgUrl: `/${previewDir}/${previewName}`,
-          createdTime: birthtime.getTime()
-        });
-      }
-      return last;
-    });
-  }, Promise.resolve([] as FilesInfo[]));
+        return last;
+      });
+    },
+    Promise.resolve([] as FilesInfo[])
+  );
 
   return ret;
 }
-
-
