@@ -3,15 +3,26 @@ import ApiError from '../utils/ApiError';
 import Cartoon from '../models/cartoon';
 import { SectionDocument } from '../models/section';
 import Section from '../models/section';
+import { searchCartoon, getHomePageInfo } from '../crawlies/iimanhua';
 
-//获取动漫列表
+export const getCartoonHomeInfo = async (ctx: Context) => {
+const homeInfo = await getHomePageInfo();
+
+  ctx.body = {
+    homeInfo
+  };
+};
+
+/** 获取动漫列表 */
 export const getCartoonList = async (ctx: Context) => {
   const cartoonList = await Cartoon.find(
     {},
     { _id: 1, cartoonName: 1, description: 1, coverImage: 1 }
   );
+  const a = searchCartoon('我是大神仙');
 
   ctx.body = {
+    aa: a,
     cartoonList: (cartoonList || []).map((item) => ({
       cartoonId: item._id,
       cartoonName: item.cartoonName,
