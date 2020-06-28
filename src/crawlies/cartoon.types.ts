@@ -80,4 +80,8 @@ export interface SectionInfo extends SectionBaseInfo {
   sectionImages: string[];
   /** 章节标题 */
   sectionTitle: string;
+  /** 章节路径 */
+  sectionHref: string;
+  /** 下一章地址 */
+  nextSectionHref: string;
 }

@@ -41,6 +41,9 @@ export function getHtmlDom(url: string): Promise<{htmlText: string | null; $: Ch
   });
 }
 
+/** */
+
+
 /**
  * 将utf-8编码转为GBK编码
  * @param formData 需要转码的对象
@@ -80,7 +83,7 @@ export function convertParamsToGbk(formData: {[key:string]: string | number}):st
  * @param path 请求路径
  * @param postData 请求数据
  */
-export function toRequestPost(hostname: string, path:string, postData:string):Promise<http.IncomingMessage> {
+export function toRequestPost(hostname: string, path:string, postData:string):Promise<any> {
   const options = {
     hostname,
     path,
@@ -96,11 +99,17 @@ export function toRequestPost(hostname: string, path:string, postData:string):Pr
       console.log('STATUS: ' + res.statusCode);
       //响应的Cookie在res.header['set-cookie']
       console.log('HEADERS: ' + JSON.stringify(res.headers));
-      resolve(res);
+      // resolve(res);
       // res.setEncoding('binary');//接收参数的时候先不要解码，或者解码为二进制
       // res.on('data', function(chunk) {
       //   console.log('BODY: ' + iconv.decode(chunk, 'gbk')); //gbk解码
       // });
+      res.on('data', (chunk) => {
+        resolve({
+          ...res,
+          responseData: chunk
+        });
+      });
     });
 
     req.on('error', reject);

@@ -43,3 +43,38 @@
 //     };
 //   }
 // };
+
+
+/**
+ * 获取章节详情
+ * TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
+ */
+// export const getSectionDetail = async (ctx: Context) => {
+//   const { sectionId, cartoonId } = ctx.request.body;
+
+//   if (!cartoonId || !sectionId) {
+//     throw new ApiError('PARAM_MISS');
+//   }
+//   const sectionInfo = await Section.findOne(
+//     { _id: sectionId, cartoonId },
+//     { sectionTitle: 1, imagesList: 1 }
+//   );
+
+//   if (sectionInfo) {
+//     const { sectionTitle, imagesList } = sectionInfo;
+
+//     ctx.body = {
+//       sectionInfo: {
+//         sectionTitle,
+//         sectionId,
+//         cartoonId,
+//         imagesList
+//       }
+//     };
+//   } else {
+//     ctx.body = {
+//       isOk: false,
+//       message: '获取章节详情失败'
+//     };
+//   }
+// };

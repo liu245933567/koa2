@@ -11,7 +11,8 @@ import {
   OtherRecommend,
   CartoonDetail,
   CartoonOtherRecommendInfo,
-  SectionBaseInfo
+  SectionBaseInfo,
+  SectionInfo
 } from './cartoon.types';
 
 /**
@@ -29,7 +30,6 @@ async function getSearchPath(searchStr: string): Promise<string | undefined> {
     keyboard: searchStr,
     Submit: '搜索漫画'
   };
-  /** 将utf-8编码转为GBK编码 */
   const postData = convertParamsToGbk(formData);
   const res = await toRequestPost(
     IImanhuaHOST.replace('https://', ''),
@@ -283,11 +283,12 @@ export async function getCartoonDetailInfo(
   };
 }
 
+
 /**
  * 获取章节详情信息
  * @param sectionHref 章节详情路径
  */
-export async function getSectionDetailInfo(sectionHref: string) {
+export async function getSectionDetailInfo(sectionHref: string):Promise<SectionInfo | null> {
   const url = IImanhuaHOST + sectionHref;
   const { htmlText, $ } = await getHtmlDom(url);
 
@@ -295,9 +296,11 @@ export async function getSectionDetailInfo(sectionHref: string) {
     return null;
   }
   let photosr: string[] = [];
+  const sectionTitle = clearElText($('h1'));
   const mathArr = htmlText.match(/packed="\S{20,}";/g) || '';
-  // base64 js代码片段
+  /** base64 js代码片段 */
   const base64js = mathArr[0].slice(8, -2);
+  /** 解码后的js代码 */
   const deCode = Buffer.from(base64js, 'base64')
     .toString()
     .slice(4);
@@ -305,12 +308,29 @@ export async function getSectionDetailInfo(sectionHref: string) {
 
   // eslint-disable-next-line no-eval
   eval(eval(deCode));
-  photosr = photosr
-    .filter((item) => item)
-    .map((link) => `${IImanhuaImageHOST}/${link}`);
+  photosr = photosr.filter((item) => item).map((link) => `${IImanhuaImageHOST}/${link}`);
+  let nextSectionHref = '';
+  // 获取下一章节数据
+  const idMatch = sectionHref.match(/[0-9]{1,}.html/g);
+  const sectionId = idMatch && idMatch[0] ? Number(idMatch[0].slice(0, -5)) : -1;
+  /** 请求下一章数据，请求参数 */
+  const nextParam = convertParamsToGbk({id:sectionId});
+
+  const {responseData} = await toRequestPost(IImanhuaHOST.replace('https://', ''), '/e/extend/ret_page/index.php', nextParam);
+
+  if (responseData) {
+    const res = responseData.toString('utf8');
+    const resData = JSON.parse(res);
+
+    if (resData.status && resData.status === 1) {
+      nextSectionHref = resData.url;
+    }
+  }
 
   return {
+    sectionTitle,
     sectionHref,
-    photosr
+    sectionImages: photosr,
+    nextSectionHref
   };
 }
