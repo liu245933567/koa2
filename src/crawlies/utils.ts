@@ -8,6 +8,9 @@ import * as iconv from 'iconv-lite';
 import * as http from 'http';
 charset(superagent);
 
+/** 取得元素内非元素的内容 */
+export const clearElText = (el: Cheerio) => el && el.clone().children().remove().end().text() || '';
+
 /**
  * 获取html信息
  * @param url 目标url
@@ -108,3 +111,6 @@ export function toRequestPost(hostname: string, path:string, postData:string):Pr
 
 /** 爱漫画地址 */
 export const IImanhuaHOST = 'https://www.iimanhua.com';
+
+/** 爱漫画图片地址 */
+export const IImanhuaImageHOST = 'http://res.img.fffimage.com';

@@ -1,12 +1,17 @@
 import { Context } from 'koa';
 import ApiError from '../utils/ApiError';
 import Cartoon from '../models/cartoon';
-import { SectionDocument } from '../models/section';
+// import { SectionDocument } from '../models/section';
 import Section from '../models/section';
-import { searchCartoon, getHomePageInfo } from '../crawlies/iimanhua';
+import {
+  // searchCartoon,
+  getHomePageInfo,
+  getCartoonDetailInfo
+} from '../crawlies/iimanhua';
 
+/** 获取漫画首页信息 */
 export const getCartoonHomeInfo = async (ctx: Context) => {
-const homeInfo = await getHomePageInfo();
+  const homeInfo = await getHomePageInfo();
 
   ctx.body = {
     homeInfo
@@ -19,10 +24,9 @@ export const getCartoonList = async (ctx: Context) => {
     {},
     { _id: 1, cartoonName: 1, description: 1, coverImage: 1 }
   );
-  const a = searchCartoon('我是大神仙');
+  // const a = searchCartoon('我是大神仙');
 
   ctx.body = {
-    aa: a,
     cartoonList: (cartoonList || []).map((item) => ({
       cartoonId: item._id,
       cartoonName: item.cartoonName,
@@ -32,55 +36,19 @@ export const getCartoonList = async (ctx: Context) => {
   };
 };
 
-// 获取动漫详情
+/** 获取动漫详情 */
 export const getCartoonDetail = async (ctx: Context) => {
-  const { cartoonId } = ctx.request.body;
+  const cartoonDetail = await getCartoonDetailInfo('/comic/3105/');
 
-  if (!cartoonId) {
-    throw new ApiError('PARAM_MISS');
-  }
-  const cartoonDetail = await Cartoon.findOne({ _id: cartoonId }).populate(
-    'sections',
-    {
-      _id: 1,
-      cartoonId: 1,
-      sectionTitle: 1
-    }
-  );
-
-  if (cartoonDetail) {
-    const {
-      cartoonName,
-      updataTime,
-      coverImage,
-      description,
-      sections
-    } = cartoonDetail;
-    const sectionList = sections as Array<SectionDocument>;
-
-    ctx.body = {
-      cartoonInfo: {
-        cartoonName,
-        updataTime,
-        coverImage,
-        description
-      },
-      sectionList: sectionList.map((item) => ({
-        sectionId: item._id,
-        cartoonId: item.cartoonId,
-        sectionTitle: item.sectionTitle
-      }))
-    };
-  } else {
-    ctx.body = {
-      isOk: false,
-      message: '获取动漫详情失败'
-    };
-  }
+  ctx.body = {
+    cartoonDetail
+  };
 };
 
-// 获取章节详情
-// TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
+/**
+ * 获取章节详情
+ * TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
+ */
 export const getSectionDetail = async (ctx: Context) => {
   const { sectionId, cartoonId } = ctx.request.body;
 
