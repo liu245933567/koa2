@@ -85,3 +85,13 @@ export interface SectionInfo extends SectionBaseInfo {
   /** 下一章地址 */
   nextSectionHref: string;
 }
+
+/** 首页信息 */
+export interface ICartoonHomeRes {
+  /** 热门推荐 */
+  hotCartoonRecommends: CartoonRecommendInfo[];
+  /** 最新更新推荐 */
+  latestRecommends: CartoonRecommendInfo[];
+  /** 其他推荐列表 */
+  otherRecommendList: OtherRecommend[];
+}
