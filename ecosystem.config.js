@@ -2,7 +2,7 @@
 module.exports = {
   apps: [{
     // 生产环境
-    name: "prod-implant",
+    name: "yanyuge-prod-back",
     // 项目启动入口文件
     script: "./dist/server.js",
     // 项目环境变量
