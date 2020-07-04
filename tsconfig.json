@@ -7,9 +7,10 @@
     "strict": true /*启用所有严格的类型检查选项*/,
     "noImplicitAny": true /*允许any类型*/,
     "noUnusedLocals": false,
-    "baseUrl": ".",
+    /* Base directory to resolve non-absolute module names. */
+    "baseUrl": "./",
+    /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "paths": {
-      "@root/*": ["./*"],
       "@src/*": ["src/*"],
       "@config/*": ["src/config/*"],
       "@typings/*": ["src/typings/*"],
@@ -18,9 +19,14 @@
       "@models/*": ["src/models/*"],
       "@crawlies/*": ["src/crawlies/*"],
       "@controllers/*": ["src/controllers/*"],
-      "@middlewares/*": ["src/middlewares/*"],
-    }
-    /* Basic Options */
+      "@middlewares/*": ["src/middlewares/*"]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ]
     // "incremental": true,                   /* Enable incremental compilation */
     // "lib": [],                             /* Specify library files to be included in the compilation. */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */
@@ -56,8 +62,6 @@
 
     /* Module Resolution Options */
     // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
-    // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
     // "types": [],                           /* Type declaration files to be included in compilation. */

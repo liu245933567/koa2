@@ -1,0 +1,25 @@
+{
+  "compact": false,
+  "retainLines": true,
+  "minified": false,
+  "inputSourceMap": false,
+  "sourceMaps": false,
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./dist"],
+        "alias": {
+          "@src": "./dist",
+          "@config": "./dist/config",
+          "@utils": "./dist/utils",
+          "@routes": "./dist/routes",
+          "@models": "./dist/models",
+          "@crawlies": "./dist/crawlies",
+          "@controllers": "./dist/controllers",
+          "@middlewares": "./dist/middlewares"
+        }
+      }
+    ]
+  ]
+}

@@ -1,11 +1,11 @@
-import 'module-alias/register';
+// import 'module-alias/register';
 import * as fs from 'fs';
 import * as http from 'http';
 import mountSocket from '@src/socket';
 import logConfig from '@config/log4js.config';
 import conf from '@config/index';
 import app from '@src/app';
-import connectDB from '@src/mongoose';
+import connectDB from '@src/mongo';
 import '@models/section';
 import '@models/cartoon';
 
