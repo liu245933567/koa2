@@ -4,10 +4,11 @@ import Cartoon from '@models/cartoon';
 // import { SectionDocument } from '../models/section';
 // import Section from '../models/section';
 import {
-  // searchCartoon,
+  searchCartoon,
   getHomePageInfo,
   getCartoonDetailInfo,
-  getSectionDetailInfo
+  getSectionDetailInfo,
+  getCategoryPageInfo
 } from '@crawlies/iimanhua';
 
 /** 获取漫画首页信息 */
@@ -25,7 +26,6 @@ export const getCartoonList = async (ctx: Context) => {
     {},
     { _id: 1, cartoonName: 1, description: 1, coverImage: 1 }
   );
-  // const a = searchCartoon('我是大神仙');
 
   ctx.body = {
     cartoonList: (cartoonList || []).map((item) => ({
@@ -34,6 +34,29 @@ export const getCartoonList = async (ctx: Context) => {
       description: item.description,
       coverImage: item.coverImage
     }))
+  };
+};
+
+/** 动漫查询 */
+export const cartoonSearch = async (ctx: Context) => {
+  const { searchStr } = ctx.request.body;
+  const { cartoonList } = await searchCartoon(searchStr);
+
+  ctx.body = {
+    result: cartoonList
+  };
+};
+
+/** 标签查询 */
+export const cartoonCategoryInfo = async (ctx: Context) => {
+  const { type, category } = ctx.request.body;
+  const result = await getCategoryPageInfo(
+    type as 'CATEGORY' | 'LETTER',
+    category
+  );
+
+  ctx.body = {
+    result
   };
 };
 
@@ -57,7 +80,6 @@ export const getCartoonDetail = async (ctx: Context) => {
 
 /**
  * 获取章节详情
- * TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
  */
 export const getSectionDetail = async (ctx: Context) => {
   const { sectionPath } = ctx.request.body;

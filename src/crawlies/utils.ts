@@ -9,13 +9,23 @@ import * as http from 'http';
 charset(superagent);
 
 /** 取得元素内非元素的内容 */
-export const clearElText = (el: Cheerio) => el && el.clone().children().remove().end().text() || '';
+export const clearElText = (el: Cheerio) =>
+  el &&
+    el
+      .clone()
+      .children()
+      .remove()
+      .end()
+      .text() ||
+  '';
 
 /**
  * 获取html信息
  * @param url 目标url
  */
-export function getHtmlDom(url: string): Promise<{htmlText: string | null; $: CheerioStatic | null }> {
+export function getHtmlDom(
+  url: string
+): Promise<{ htmlText: string | null; $: CheerioStatic | null }> {
   return new Promise((resolve) => {
     superagent
       .get(url)
@@ -25,9 +35,9 @@ export function getHtmlDom(url: string): Promise<{htmlText: string | null; $: Ch
       // @ts-ignore
       .end((err, res) => {
         if (err) {
-          resolve({htmlText: null, $: null});
+          resolve({ htmlText: null, $: null });
         } else {
-          const htmlText:string = res.text;
+          const htmlText: string = res.text;
           const $ = cheerio.load(htmlText);
 
           resolve({
@@ -43,13 +53,13 @@ export function getHtmlDom(url: string): Promise<{htmlText: string | null; $: Ch
 
 /** */
 
-
 /**
  * 将utf-8编码转为GBK编码
  * @param formData 需要转码的对象
  */
-export function convertParamsToGbk(formData: {[key:string]: string | number}):string {
-
+export function convertParamsToGbk(formData: {
+  [key: string]: string | number;
+}): string {
   const postData = querystring.stringify(
     formData,
     null as never,
@@ -83,7 +93,11 @@ export function convertParamsToGbk(formData: {[key:string]: string | number}):st
  * @param path 请求路径
  * @param postData 请求数据
  */
-export function toRequestPost(hostname: string, path:string, postData:string):Promise<any> {
+export function toRequestPost(
+  hostname: string,
+  path: string,
+  postData: string
+): Promise<any> {
   const options = {
     hostname,
     path,
@@ -99,7 +113,7 @@ export function toRequestPost(hostname: string, path:string, postData:string):Pr
       console.log('STATUS: ' + res.statusCode);
       //响应的Cookie在res.header['set-cookie']
       console.log('HEADERS: ' + JSON.stringify(res.headers));
-      // resolve(res);
+      resolve(res);
       // res.setEncoding('binary');//接收参数的时候先不要解码，或者解码为二进制
       // res.on('data', function(chunk) {
       //   console.log('BODY: ' + iconv.decode(chunk, 'gbk')); //gbk解码

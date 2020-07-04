@@ -2,19 +2,28 @@ import {
   convertParamsToGbk,
   toRequestPost,
   IImanhuaHOST,
-  IImanhuaImageHOST,
   getHtmlDom,
   clearElText
 } from './utils';
 import {
-  CartoonRecommendInfo,
-  OtherRecommend,
   CartoonDetail,
+  SectionInfo,
   CartoonOtherRecommendInfo,
-  SectionBaseInfo,
-  SectionInfo
-  // ICartoonCategory
+  ICategoryPageInfo,
+  ILetterPageInfo,
+  ISearchPageInfo
 } from '@typings/cartoon';
+import {
+  getRankInfo,
+  getRecommendInfos,
+  getCartoonListInfos,
+  getPageListInfos,
+  resolveCartoonDetail,
+  resolveSectionImages,
+  resolveCategorys,
+  getRecommendCartoon,
+  resolveOtherRecommendList
+} from './iimanhuaDom';
 
 /**
  * 获取搜索地址
@@ -41,16 +50,6 @@ async function getSearchPath(searchStr: string): Promise<string | undefined> {
   return res.headers.location;
 }
 
-/**
- * 查询动漫
- * @param searchStr 查询的字符串
- */
-export async function searchCartoon(searchStr: string) {
-  const searchPath = await getSearchPath(searchStr);
-
-  console.log(searchPath);
-}
-
 /** 获取首页数据 */
 export async function getHomePageInfo() {
   const homeUrl = IImanhuaHOST;
@@ -60,139 +59,89 @@ export async function getHomePageInfo() {
     return {};
   }
   /** 种类列表 */
-  // let categorys: ICartoonCategory[] = [];
-
-  /** 获取顶部推荐漫画 */
-  const getRecommendCartoon = (type: 'coverBoxList2' | 'coverBoxList3') => {
-    let resultArr: CartoonRecommendInfo[] = [];
-
-    $(`.${type} .coverMhList .scroll li`).each((i, v) => {
-      const $cover = $(v).find('a.pic');
-      const detailHref = $($cover).attr('href') || '';
-      const coverPictureSrc =
-        $($cover)
-          .children('img')
-          .attr('src') || '';
-      const $coverInfoChildren = $(v)
-        .find('p.coverInfo')
-        .children();
-      const cartoonName = $coverInfoChildren.eq(0).text();
-      const cartoonAuthor = clearElText($coverInfoChildren.eq(1));
-      const cartoonCategory = clearElText($coverInfoChildren.eq(2));
-      const latestChapter = clearElText($coverInfoChildren.eq(3));
-      const upDataTime =
-        $coverInfoChildren.eq(4) &&
-          $coverInfoChildren
-            .eq(4)
-            .find('font')
-            .text() ||
-        '';
-
-      resultArr.push({
-        detailHref,
-        coverPictureSrc,
-        cartoonName,
-        cartoonAuthor,
-        cartoonCategory,
-        latestChapter,
-        upDataTime
-      });
-    });
-    return resultArr;
-  };
+  let categorys = resolveCategorys($, '.nav .navWarp li');
 
   /** 热门连载漫画 */
-  const hotCartoonRecommends = getRecommendCartoon('coverBoxList2');
+  const hotCartoonRecommends = getRecommendCartoon($, 'coverBoxList2');
   /** 最新更新漫画 */
-  const latestRecommends = getRecommendCartoon('coverBoxList3');
+  const latestRecommends = getRecommendCartoon($, 'coverBoxList3');
   /** 其他推荐列表 */
-  let otherRecommendList: OtherRecommend[] = [];
-
-  $('.floorList').each((i, v) => {
-    let curInfo: OtherRecommend = {
-      recommend: {
-        title: '',
-        recommendList: []
-      },
-      rank: {
-        title: '',
-        rankList: []
-      }
-    };
-    const $floorLeft = $(v).children('div.floorLeft');
-
-    curInfo.recommend.title = $floorLeft.find('h4 a').text() || '';
-    $floorLeft.find('ul li').each((ri, rv) => {
-      const coverPictureSrc =
-        $(rv)
-          .find('a.pic img')
-          .attr('src') || '';
-      const detailHref =
-        $(rv)
-          .find('a.pic')
-          .attr('href') || '';
-      const latestChapter =
-        $(rv)
-          .find('.cover span')
-          .text() || '';
-      const cartoonName =
-        $(rv)
-          .children('a')
-          .text() || '';
-
-      curInfo.recommend.recommendList.push({
-        coverPictureSrc,
-        detailHref,
-        latestChapter,
-        cartoonName
-      });
-    });
-
-    const $floorRight = $(v).children('div.floorRight');
-
-    curInfo.rank.title = $floorRight.find('h4').text() || '';
-    $floorRight.find('ul li').each((ri, rv) => {
-      let cartoonName = '';
-      let detailHref = '';
-
-      if (ri === 0) {
-        cartoonName =
-          $(rv)
-            .find('.cover span')
-            .clone()
-            .children()
-            .remove()
-            .end()
-            .text() || '';
-        detailHref =
-          $(rv)
-            .find('.cover .pic')
-            .attr('href') || '';
-      } else {
-        cartoonName =
-          $(rv)
-            .children('a')
-            .text() || '';
-        detailHref =
-          $(rv)
-            .children('a')
-            .attr('href') || '';
-      }
-
-      curInfo.rank.rankList.push({
-        detailHref,
-        cartoonName
-      });
-    });
-
-    otherRecommendList.push(curInfo);
-  });
+  let otherRecommendList = resolveOtherRecommendList($);
 
   return {
     hotCartoonRecommends,
     latestRecommends,
-    otherRecommendList
+    otherRecommendList,
+    categorys
   };
+}
+
+/**
+ * 获取种类页数据
+ * @param type 查询的类型
+ * @param categoryPath 种类路径
+ */
+export async function getCategoryPageInfo(
+  type: 'CATEGORY' | 'LETTER' | 'SEARCH',
+  categoryPath: string = '/shaonianrexue'
+): Promise<ICategoryPageInfo | ILetterPageInfo | ISearchPageInfo | null> {
+  const url =
+    type === 'SEARCH' ?
+      'https://www.iimanhua.com/e/search/' + categoryPath :
+      IImanhuaHOST + categoryPath;
+  const { $ } = await getHtmlDom(url);
+
+  if (!$) {
+    return null;
+  }
+  /** 动漫列表 */
+  let cartoonList = getCartoonListInfos($, '#dmList ul li');
+
+  if (type === 'CATEGORY') {
+    /** 热门排行 */
+    let hotRankingList = getRankInfo($, '.topList ul li');
+    /** 最新排行 */
+    let latestRankingList = getRankInfo($, '.newUpdate ul li');
+    /** 热门推荐 */
+    let hotCartoonRecommends = getRecommendInfos($, '#lcmd_list ul');
+    /** 页码列表 */
+    let pageList = getPageListInfos($, '#pager a[target=_self]');
+
+    return {
+      hotRankingList,
+      latestRankingList,
+      hotCartoonRecommends,
+      cartoonList,
+      pageList
+    };
+  } else if (type === 'LETTER') {
+    /** 页码列表 */
+    let pageList = getPageListInfos($, '#pager a[target=_self]');
+
+    return {
+      cartoonList,
+      pageList
+    };
+  }
+  return {
+    cartoonList
+  };
+}
+
+/**
+ * 查询动漫
+ * @param searchStr 查询的字符串
+ */
+export async function searchCartoon(searchStr: string) {
+  const searchPath = await getSearchPath(searchStr);
+  let cartoonList: CartoonOtherRecommendInfo[] = [];
+
+  if (searchPath && searchPath.indexOf('?searchid=0')) {
+    const data = await getCategoryPageInfo('SEARCH', searchPath);
+
+    cartoonList = data?.cartoonList as CartoonOtherRecommendInfo[];
+  }
+  return { cartoonList };
 }
 
 /**
@@ -208,118 +157,42 @@ export async function getCartoonDetailInfo(
   if (!$) {
     return null;
   }
-  const coverPictureSrc = $('.info_cover img').attr('src') || '';
-  const cartoonName = $('.titleInfo h1').text();
-  const state = $('.titleInfo span').text();
-  const $infoUl = $('.detailInfo ul li');
-  const upDataTime = $infoUl
-    .eq(0)
-    .find('font')
-    .text();
-  const cartoonAuthor = clearElText($infoUl.eq(1));
-  const cartoonCategory = clearElText($infoUl.eq(2));
-  const alphabetIndex = $infoUl
-    .eq(3)
-    .find('a')
-    .text();
-  const alias = clearElText($infoUl.eq(4));
-  const latestChapter = clearElText($infoUl.eq(5));
-  const keyWords = clearElText($infoUl.eq(6));
-  const popularity = clearElText($infoUl.eq(7));
-  const introduction = $('#intro1').text();
-  const $similarList = $('#similarList ul li');
-  let recommendList: CartoonOtherRecommendInfo[] = [];
-  let sectionList: SectionBaseInfo[] = [];
-
-  if ($similarList) {
-    $similarList.each((i, v) => {
-      const cpSrc =
-        $(v)
-          .find('img')
-          .attr('src') || '';
-      const cName = $(v)
-        .children('a')
-        .text();
-      const cHref =
-        $(v)
-          .children('a')
-          .attr('href') || '';
-      const lChapter = $(v)
-        .find('.cover span')
-        .text();
-
-      recommendList.push({
-        cartoonName: cName,
-        coverPictureSrc: cpSrc,
-        detailHref: cHref,
-        latestChapter: lChapter
-      });
-    });
-  }
-  $('#play_0 ul li').each((i, v) => {
-    const $aEl = $(v).find('a');
-    const sectionTitle = $aEl.text();
-    const sectionHref = $aEl.prop('href');
-
-    sectionList.push({
-      sectionTitle,
-      sectionHref
-    });
-  });
+  const detail = resolveCartoonDetail($);
 
   return {
-    coverPictureSrc,
-    cartoonName,
-    state,
-    upDataTime,
-    cartoonAuthor,
-    cartoonCategory,
-    alphabetIndex,
-    alias,
-    latestChapter,
-    keyWords,
-    popularity,
-    introduction,
-    detailHref,
-    recommendList,
-    sectionList
+    ...detail,
+    detailHref
   };
 }
-
 
 /**
  * 获取章节详情信息
  * @param sectionHref 章节详情路径
  */
-export async function getSectionDetailInfo(sectionHref: string):Promise<SectionInfo | null> {
+export async function getSectionDetailInfo(
+  sectionHref: string
+): Promise<SectionInfo | null> {
   const url = IImanhuaHOST + sectionHref;
   const { htmlText, $ } = await getHtmlDom(url);
 
   if (!$ || !htmlText) {
     return null;
   }
-  let photosr: string[] = [];
+  let sectionImages = resolveSectionImages(htmlText);
   const sectionTitle = clearElText($('h1'));
-  const mathArr = htmlText.match(/packed="\S{20,}";/g) || '';
-  /** base64 js代码片段 */
-  const base64js = mathArr[0].slice(8, -2);
-  /** 解码后的js代码 */
-  const deCode = Buffer.from(base64js, 'base64')
-    .toString()
-    .slice(4);
-  // 执行解析后的代码
-
-  // eslint-disable-next-line no-eval
-  eval(eval(deCode));
-  photosr = photosr.filter((item) => item).map((link) => `${IImanhuaImageHOST}/${link}`);
   let nextSectionHref = '';
   // 获取下一章节数据
   const idMatch = sectionHref.match(/[0-9]{1,}.html/g);
-  const sectionId = idMatch && idMatch[0] ? Number(idMatch[0].slice(0, -5)) : -1;
+  const sectionId =
+    idMatch && idMatch[0] ? Number(idMatch[0].slice(0, -5)) : -1;
   /** 请求下一章数据，请求参数 */
-  const nextParam = convertParamsToGbk({id:sectionId});
+  const nextParam = convertParamsToGbk({ id: sectionId });
 
-  const {responseData} = await toRequestPost(IImanhuaHOST.replace('https://', ''), '/e/extend/ret_page/index.php', nextParam);
+  const { responseData } = await toRequestPost(
+    IImanhuaHOST.replace('https://', ''),
+    '/e/extend/ret_page/index.php',
+    nextParam
+  );
 
   if (responseData) {
     const res = responseData.toString('utf8');
@@ -333,7 +206,7 @@ export async function getSectionDetailInfo(sectionHref: string):Promise<SectionI
   return {
     sectionTitle,
     sectionHref,
-    sectionImages: photosr,
+    sectionImages,
     nextSectionHref
   };
 }
