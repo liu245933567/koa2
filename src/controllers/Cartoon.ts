@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 // import ApiError from '../utils/ApiError';
-import Cartoon from '../models/cartoon';
+import Cartoon from '@models/cartoon';
 // import { SectionDocument } from '../models/section';
 // import Section from '../models/section';
 import {
@@ -8,14 +8,14 @@ import {
   getHomePageInfo,
   getCartoonDetailInfo,
   getSectionDetailInfo
-} from '../crawlies/iimanhua';
+} from '@crawlies/iimanhua';
 
 /** 获取漫画首页信息 */
 export const getCartoonHomeInfo = async (ctx: Context) => {
   const homeInfo = await getHomePageInfo();
 
   ctx.body = {
-    homeInfo
+    result: homeInfo
   };
 };
 
@@ -39,11 +39,20 @@ export const getCartoonList = async (ctx: Context) => {
 
 /** 获取动漫详情 */
 export const getCartoonDetail = async (ctx: Context) => {
-  const cartoonDetail = await getCartoonDetailInfo('/comic/3105/');
+  const { cartoonPath } = ctx.request.body;
 
-  ctx.body = {
-    cartoonDetail
-  };
+  if (cartoonPath) {
+    const cartoonDetail = await getCartoonDetailInfo(cartoonPath);
+
+    ctx.body = {
+      result: cartoonDetail
+    };
+  } else {
+    ctx.body = {
+      isOk: false,
+      message: '参数不对'
+    };
+  }
 };
 
 /**
@@ -51,9 +60,18 @@ export const getCartoonDetail = async (ctx: Context) => {
  * TODO: 获取上一章、下一张、返回是否有上一章下一章的参数
  */
 export const getSectionDetail = async (ctx: Context) => {
-  const sectionDeatil = await getSectionDetailInfo('/comic/3105/305615.html');
+  const { sectionPath } = ctx.request.body;
 
-  ctx.body = {
-    sectionDeatil: sectionDeatil || {}
-  };
+  if (sectionPath) {
+    const sectionDeatil = await getSectionDetailInfo(sectionPath);
+
+    ctx.body = {
+      result: sectionDeatil
+    };
+  } else {
+    ctx.body = {
+      isOk: false,
+      message: '参数不对'
+    };
+  }
 };

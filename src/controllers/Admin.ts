@@ -1,6 +1,6 @@
 import { Context } from 'koa';
-import Crawler from '../models/crawler';
-import ApiError from '../utils/ApiError';
+import Crawler from '@models/crawler';
+import ApiError from '@utils/ApiError';
 
 // 添加爬虫
 export const addCrawler = async (ctx: Context) => {

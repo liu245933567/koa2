@@ -1,29 +1,32 @@
 import { Schema, model, Document } from 'mongoose';
-import {SectionDocument} from './section';
+import { SectionDocument } from './section';
 
-const CartoonSchema = new Schema({
-  _id: {
-    type: Number
+const CartoonSchema = new Schema(
+  {
+    _id: {
+      type: Number
+    },
+    description: {
+      type: String
+    },
+    cartoonName: {
+      type: String
+    },
+    updataTime: {
+      type: Date
+    },
+    coverImage: {
+      type: String
+    },
+    sections: [
+      {
+        type: Number,
+        ref: 'Section'
+      }
+    ]
   },
-  description: {
-    type: String
-  },
-  cartoonName: {
-    type: String
-  },
-  updataTime: {
-    type: Date
-  },
-  coverImage: {
-    type: String
-  },
-  sections: [
-    {
-      type: Number,
-      ref: 'Section'
-    }
-  ]
-}, {versionKey: false});
+  { versionKey: false }
+);
 
 export interface CartoonDocument extends Document {
   // 动漫 id

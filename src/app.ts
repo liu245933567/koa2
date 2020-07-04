@@ -4,18 +4,20 @@ import * as bodyParser from 'koa-bodyparser';
 // import * as path from 'path';
 import * as staticServer from 'koa-static';
 import * as range from 'koa-range';
-import responseFormatter from './middlewares/responseFormatter';
+import config from '@config/index';
+import responseFormatter from '@middlewares/responseFormatter';
 import {
   // setHeader,
   cors
-} from './middlewares/cors';
-import loger from './middlewares/loger';
-// import { verify } from './middlewares/auth';
-import cartoon from './routes/cartoon';
-import admin from './routes/admin';
-import config from './config';
+} from '@middlewares/cors';
+import loger from '@middlewares/loger';
+// import { verify } from '@middlewares/auth';
+import cartoon from '@routes/cartoon';
+// import video from '@routes/video';
+// import admin from '@routes/admin';
+
 // import user from './routes/user';
-import video from './routes/video';
+
 
 const app = new Koa();
 const router = new Router();
@@ -30,8 +32,8 @@ app.use(loger);
 // app.use(verify);
 
 router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
-router.use('/admin', admin.routes(), admin.allowedMethods());
-router.use('/video', video.routes(), video.allowedMethods());
+// router.use('/admin', admin.routes(), admin.allowedMethods());
+// router.use('/video', video.routes(), video.allowedMethods());
 // router.use('/user', user.routes(), user.allowedMethods());
 
 app.use(responseFormatter('^/'));

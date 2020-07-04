@@ -1,4 +1,4 @@
-import { Base } from './conf.types';
+import { Base } from '@typings/config';
 
 const devConf: Base = {
   env: 'development',

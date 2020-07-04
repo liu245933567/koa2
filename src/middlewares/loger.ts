@@ -1,4 +1,4 @@
-import {logError, logResponse} from '../utils/log';
+import {logError, logResponse} from '@utils/log';
 import {Context, Next} from 'koa';
 
 export default async (ctx:Context, next:Next) => {

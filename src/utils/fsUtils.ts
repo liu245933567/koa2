@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ffmpeg from 'fluent-ffmpeg';
-import config from '../config';
+import config from '@config/index';
 
 /** 输出文件信息 */
 interface FilesInfo {

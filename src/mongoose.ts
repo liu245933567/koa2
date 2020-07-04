@@ -3,7 +3,7 @@
  */
 
 import * as mongoose from 'mongoose';
-import config from './config';
+import config from '@config/index';
 
 const { mongoDB } = config;
 

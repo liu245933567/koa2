@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import * as koaJwt from 'koa-jwt';
 import { Context, Next } from 'koa';
-import userModel from '../models/user';
+// import userModel from '@models/user';
 
 const SECRET = 'shared-secret';
 
@@ -31,19 +31,19 @@ export const verify = async (ctx: Context, next: Next) => {
     let isVerifyed = true;
 
     if (token) {
-      let phoneNo: number = 111,
-        password: string = '111';
+      // let phoneNo: number = 111,
+      //   password: string = '111';
 
       jwt.verify(token, SECRET, (err, decoded: any) => {
         if (err) {
           isVerifyed = false;
         } else {
-          phoneNo = decoded.phoneNo;
-          password = decoded.password;
+          // phoneNo = decoded.phoneNo;
+          // password = decoded.password;
         }
       });
       if (isVerifyed) {
-        isVerifyed = await userModel.isVerifyedToken({ phoneNo, password });
+        // isVerifyed = await userModel.findOne({ phoneNo, password });
       }
     } else {
       isVerifyed = false;

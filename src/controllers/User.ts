@@ -1,13 +1,13 @@
 import { Context } from 'koa';
-import userModel from '../models/user';
-import { sign } from '../middlewares/auth';
+import userModel from '@models/user';
+import { sign } from '@middlewares/auth';
 import {
   isMobile,
   isEmail,
   isYYYYMMDD,
   isGender,
   checkPwd
-} from '../utils/rexp';
+} from '@utils/rexp';
 
 // 用户登录
 export const login = async (ctx: Context) => {
@@ -20,7 +20,7 @@ export const login = async (ctx: Context) => {
     message = '请填写完整信息';
   }
   if (isOk) {
-    const isVerifyed = await userModel.isVerifyedToken({ phoneNo, password });
+    const isVerifyed = await userModel.findOne({ phoneNo, password });
 
     if (!isVerifyed) {
       isOk = false;
@@ -42,7 +42,7 @@ export const register = async (ctx: Context) => {
     phoneNo,
     password,
     email,
-    nickname,
+    // nickname,
     gender,
     brithday
   } = ctx.request.body;
@@ -60,14 +60,14 @@ export const register = async (ctx: Context) => {
     (!brithday || brithday && isYYYYMMDD(brithday));
 
   if (isVerifyed) {
-    res = await userModel.register({
-      phoneNo,
-      password,
-      email: email || 'NULL',
-      nickname: nickname || phoneNo,
-      gender: gender || 'male',
-      brithday: brithday || '1991-12-24'
-    });
+    //  await userModel.create({
+    //   phoneNo,
+    //   password,
+    //   email: email || 'NULL',
+    //   nickname: nickname || phoneNo,
+    //   gender: gender || 'male',
+    //   brithday: brithday || '1991-12-24'
+    // });
   } else {
     res = {
       isOk: false,

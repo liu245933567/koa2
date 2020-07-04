@@ -4,7 +4,7 @@ import {
   getCartoonDetail,
   getSectionDetail,
   getCartoonHomeInfo
-} from '../controllers/Cartoon';
+} from '@controllers/Cartoon';
 const router = new Router();
 
 router.post('/cartoonHome.json', getCartoonHomeInfo);

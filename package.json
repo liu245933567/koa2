@@ -7,6 +7,18 @@
     "start": "cross-env NODE_ENV=development nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/server.ts",
     "build": "rm -rf dist/* && tsc"
   },
+  "_moduleAliases": {
+    "@root": ".",
+    "@src": "src",
+    "@config": "src/config",
+    "@typings": "src/typings",
+    "@utils": "src/utils",
+    "@routes": "src/routes",
+    "@models": "src/models",
+    "@crawlies": "src/crawlies",
+    "@controllers": "src/controllers",
+    "@middlewares": "src/middlewares"
+  },
   "dependencies": {
     "@types/cheerio": "^0.22.18",
     "cheerio": "^1.0.0-rc.3",
@@ -21,6 +33,7 @@
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
     "log4js": "^6.3.0",
+    "module-alias": "^2.2.2",
     "moment": "^2.26.0",
     "mongoose": "^5.9.18",
     "mysql": "^2.18.1",

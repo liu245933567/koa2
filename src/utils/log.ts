@@ -1,6 +1,6 @@
 import * as log4js from 'log4js';
 import {Context, Request} from 'koa';
-import logConfig from '../config/log4js.config';
+import logConfig from '@config/log4js.config';
 
 //加载配置文件
 log4js.configure(logConfig);

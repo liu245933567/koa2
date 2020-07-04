@@ -89,9 +89,28 @@ export interface SectionInfo extends SectionBaseInfo {
 /** 首页信息 */
 export interface ICartoonHomeRes {
   /** 热门推荐 */
-  hotCartoonRecommends: CartoonRecommendInfo[];
+  hotCartoonRecommends: CartoonRecommendInfo[] | never[];
   /** 最新更新推荐 */
-  latestRecommends: CartoonRecommendInfo[];
+  latestRecommends: CartoonRecommendInfo[] | never[];
   /** 其他推荐列表 */
-  otherRecommendList: OtherRecommend[];
+  otherRecommendList: OtherRecommend[] | never[];
+}
+/** 动漫详情请求参数 */
+export interface ICartoonDeatilInfoReq {
+  /** 详情路径 */
+  cartoonPath: string;
+}
+
+/** 章节详情请求参数 */
+export interface ISectionDeatilInfoReq {
+  /** 章节详情路径 */
+  sectionPath: string;
+}
+
+/** 动漫类型标签 */
+export interface ICartoonCategory {
+  /** 种类名称 */
+  category: string;
+  /** 种类code */
+  categoryKey: string;
 }

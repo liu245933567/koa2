@@ -1,12 +1,13 @@
+import 'module-alias/register';
 import * as fs from 'fs';
 import * as http from 'http';
-import mountSocket from './socket';
-import logConfig from './config/log4js.config';
-import conf from './config';
-import app from './app';
-import connectDB from './mongoose';
-import './models/section';
-import './models/cartoon';
+import mountSocket from '@src/socket';
+import logConfig from '@config/log4js.config';
+import conf from '@config/index';
+import app from '@src/app';
+import connectDB from '@src/mongoose';
+import '@models/section';
+import '@models/cartoon';
 
 connectDB()
   .then(() => {

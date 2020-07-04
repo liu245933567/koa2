@@ -9,7 +9,16 @@
     "noUnusedLocals": false,
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "@root/*": ["./*"],
+      "@src/*": ["src/*"],
+      "@config/*": ["src/config/*"],
+      "@typings/*": ["src/typings/*"],
+      "@utils/*": ["src/utils/*"],
+      "@routes/*": ["src/routes/*"],
+      "@models/*": ["src/models/*"],
+      "@crawlies/*": ["src/crawlies/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@middlewares/*": ["src/middlewares/*"],
     }
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */

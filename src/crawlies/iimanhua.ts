@@ -13,7 +13,8 @@ import {
   CartoonOtherRecommendInfo,
   SectionBaseInfo,
   SectionInfo
-} from './cartoon.types';
+  // ICartoonCategory
+} from '@typings/cartoon';
 
 /**
  * 获取搜索地址
@@ -58,6 +59,8 @@ export async function getHomePageInfo() {
   if (!$) {
     return {};
   }
+  /** 种类列表 */
+  // let categorys: ICartoonCategory[] = [];
 
   /** 获取顶部推荐漫画 */
   const getRecommendCartoon = (type: 'coverBoxList2' | 'coverBoxList3') => {
