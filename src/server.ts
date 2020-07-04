@@ -1,4 +1,4 @@
-// import 'module-alias/register';
+import 'module-alias/register';
 import * as fs from 'fs';
 import * as http from 'http';
 import mountSocket from '@src/socket';

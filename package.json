@@ -5,7 +5,20 @@
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/server.ts",
+    "start:prod": "rimraf dist/* && ttsc && babel dist -d dist && pm2 start ecosystem.config.js --only prod-implant --watch",
     "build": "rimraf dist/* && ttsc && babel dist -d dist"
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@src": "src",
+    "@config": "src/config",
+    "@typings": "src/typings",
+    "@utils": "src/utils",
+    "@routes": "src/routes",
+    "@models": "src/models",
+    "@crawlies": "src/crawlies",
+    "@controllers": "src/controllers",
+    "@middlewares": "src/middlewares"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
