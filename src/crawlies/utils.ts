@@ -113,7 +113,9 @@ export function toRequestPost(
       console.log('STATUS: ' + res.statusCode);
       //响应的Cookie在res.header['set-cookie']
       console.log('HEADERS: ' + JSON.stringify(res.headers));
-      resolve(res);
+      if (res.headers.location) {
+        resolve(res);
+      }
       // res.setEncoding('binary');//接收参数的时候先不要解码，或者解码为二进制
       // res.on('data', function(chunk) {
       //   console.log('BODY: ' + iconv.decode(chunk, 'gbk')); //gbk解码
