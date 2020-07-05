@@ -123,6 +123,11 @@ export interface ISectionDeatilInfoReq {
   sectionPath: string;
 }
 
+/** 查询动漫参数 */
+export interface ISearchCartonReq {
+  searchStr: string;
+}
+
 /** 种类查询结果 */
 export interface ICategoryPageInfo {
   /** 热门排行 */
@@ -145,7 +150,7 @@ export interface ILetterPageInfo {
   pageList: IPageNav[];
 }
 
-/** 字母查询结果 */
+/** 动漫查询结果 */
 export interface ISearchPageInfo {
   /** 动漫列表 */
   cartoonList: CartoonOtherRecommendInfo[];
