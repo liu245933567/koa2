@@ -207,6 +207,8 @@ export async function getSectionDetailInfo(
     sectionTitle,
     sectionHref,
     sectionImages,
-    nextSectionHref
+    nextSectionHref,
+    sectionId,
+    isWatched: false
   };
 }

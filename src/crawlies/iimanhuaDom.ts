@@ -365,10 +365,15 @@ export function resolveCartoonDetail($: CheerioStatic) {
     const $aEl = $(v).find('a');
     const sectionTitle = $aEl.text();
     const sectionHref = $aEl.prop('href');
+    const idMatch = sectionHref.match(/[0-9]{1,}.html/g);
+    const sectionId =
+      idMatch && idMatch[0] ? Number(idMatch[0].slice(0, -5)) : -1;
 
     sectionList.push({
       sectionTitle,
-      sectionHref
+      sectionHref,
+      sectionId,
+      isWatched: false
     });
   });
 

@@ -8,10 +8,10 @@ const responseFormatter = (ctx:Context) => {
   //如果有返回数据，将返回数据添加到data中
   if (ctx.body) {
     ctx.body = {
-      isOk: true,
       code: 200,
       message: 'success',
-      ...ctx.body
+      ...ctx.body,
+      isOk: Boolean(ctx.body.result)
     };
   } else {
     ctx.body = {
