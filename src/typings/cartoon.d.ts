@@ -104,12 +104,12 @@ export interface IPageNav {
 /** 首页信息 */
 export interface ICartoonHomeRes {
   /** 热门推荐 */
-  hotCartoonRecommends: CartoonRecommendInfo[] | never[];
+  hotCartoonRecommends: CartoonRecommendInfo[];
   /** 最新更新推荐 */
-  latestRecommends: CartoonRecommendInfo[] | never[];
+  latestRecommends: CartoonRecommendInfo[];
   /** 其他推荐列表 */
-  otherRecommendList: OtherRecommend[] | never[];
-  categorys: ICartoonCategory[] | never[];
+  otherRecommendList: OtherRecommend[];
+  categorys: ICartoonCategory[];
 }
 /** 动漫详情请求参数 */
 export interface ICartoonDeatilInfoReq {
