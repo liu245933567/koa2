@@ -11,7 +11,8 @@ import {
   CartoonOtherRecommendInfo,
   ICategoryPageInfo,
   ILetterPageInfo,
-  ISearchPageInfo
+  ISearchPageInfo,
+  ICartoonHomeRes
 } from '@typings/cartoon';
 import {
   getRankInfo,
@@ -24,7 +25,7 @@ import {
   getRecommendCartoon,
   resolveOtherRecommendList
 } from './iimanhuaDom';
-
+import { redisGet, redisSet } from '@src/redisDB';
 /**
  * 获取搜索地址
  * @param searchStr 查询的字符串
@@ -52,15 +53,20 @@ async function getSearchPath(searchStr: string): Promise<string | undefined> {
 
 /** 获取首页数据 */
 export async function getHomePageInfo() {
+  const homeInfo: ICartoonHomeRes | null = await redisGet('cartoon_home_info');
+
+  if (homeInfo) {
+    return homeInfo;
+  }
+
   const homeUrl = IImanhuaHOST;
   const { $ } = await getHtmlDom(homeUrl);
 
   if (!$) {
-    return {};
+    return null;
   }
   /** 种类列表 */
   let categorys = resolveCategorys($, '.nav .navWarp li');
-
   /** 热门连载漫画 */
   const hotCartoonRecommends = getRecommendCartoon($, 'coverBoxList2');
   /** 最新更新漫画 */
@@ -68,6 +74,12 @@ export async function getHomePageInfo() {
   /** 其他推荐列表 */
   let otherRecommendList = resolveOtherRecommendList($);
 
+  await redisSet('cartoon_home_info', {
+    hotCartoonRecommends,
+    latestRecommends,
+    otherRecommendList,
+    categorys
+  });
   return {
     hotCartoonRecommends,
     latestRecommends,

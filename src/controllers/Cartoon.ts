@@ -13,10 +13,10 @@ import {
 
 /** 获取漫画首页信息 */
 export const getCartoonHomeInfo = async (ctx: Context) => {
-  const homeInfo = await getHomePageInfo();
+  const result = await getHomePageInfo();
 
   ctx.body = {
-    result: homeInfo
+    result
   };
 };
 

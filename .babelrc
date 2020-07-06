@@ -12,6 +12,7 @@
         "alias": {
           "@src": "./dist",
           "@config": "./dist/config",
+          "@constants": "./dist/constants",
           "@utils": "./dist/utils",
           "@routes": "./dist/routes",
           "@models": "./dist/models",

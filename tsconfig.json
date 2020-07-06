@@ -13,6 +13,7 @@
     "paths": {
       "@src/*": ["src/*"],
       "@config/*": ["src/config/*"],
+      "@constants/*": ["src/constants/*"],
       "@typings/*": ["src/typings/*"],
       "@utils/*": ["src/utils/*"],
       "@routes/*": ["src/routes/*"],

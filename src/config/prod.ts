@@ -18,6 +18,11 @@ const prodConf: Base = {
     useNewUrlParser: true,
     useUnifiedTopology: true
   },
+  redis: {
+    host: '127.0.0.1',
+    port: 6397,
+    auth_pass: '199699'
+  },
   staticPath: 'F:special'
 };
 

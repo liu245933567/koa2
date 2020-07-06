@@ -21,6 +21,13 @@ export interface Base {
     useNewUrlParser: boolean;
     useUnifiedTopology: boolean;
   };
+  /** redis 配置 */
+  redis: {
+    host: string;
+    port: number;
+    /** 密码 */
+    auth_pass: string;
+  },
   /** 静态资源路径 */
   staticPath: string;
 }
