@@ -16,7 +16,7 @@ import cartoon from '@routes/cartoon';
 // import video from '@routes/video';
 // import admin from '@routes/admin';
 
-// import user from './routes/user';
+import user from '@routes/user';
 
 
 const app = new Koa();
@@ -34,7 +34,7 @@ app.use(loger);
 router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
 // router.use('/admin', admin.routes(), admin.allowedMethods());
 // router.use('/video', video.routes(), video.allowedMethods());
-// router.use('/user', user.routes(), user.allowedMethods());
+router.use('/user', user.routes(), user.allowedMethods());
 
 app.use(responseFormatter('^/'));
 

@@ -1,3 +1,11 @@
+/*
+ * @Author: LiuYh
+ * @Description: 动漫详情集合
+ * @Date: 2020-07-07 15:13:13
+ * @Last Modified by: LiuYh
+ * @Last Modified time: 2020-07-07 15:20:18
+ */
+
 import { Schema, model, Document } from 'mongoose';
 import { SectionDocument } from './section';
 

@@ -1,25 +1,13 @@
 import * as redis from 'redis';
-// import config from '@config/index';
+import config from '@config/index';
 
 // 端口、IP、密码
-const client = redis.createClient();
-
-// client.auth(config.redis.auth_pass, (s) => {
-//   console.log(s);
+const client = redis.createClient(config.redis);
+// const client = redis.createClient({
+//   host: '49.233.26.21',
+//   port: 6379,
+//   password: '199699'
 // });
-// set 插入
-
-// client.set('stringKey', 'stringValue');
-// client.set('stringKey', 'stringValue', 'EX', 10); // 可设置过期时间（单位：秒）
-// // get 获取
-// client.get('stringKey', (err, value) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(value);
-// });
-// // del 删除
-// client.del('stringKey');
 
 /**
  * 存储 redis 数据

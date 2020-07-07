@@ -17,7 +17,7 @@ export const checkPwd = (str: string) => {
   let Lv = 0;
 
   if (str.length >= 6) {
-    return Lv++;
+    Lv++;
   }
   if (/[0-9]/.test(str)) {
     Lv++;

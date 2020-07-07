@@ -1,17 +1,34 @@
 import { Schema, model, Document } from 'mongoose';
+// import { IUserInfo } from '@typings/user';
 
 const UserSchema = new Schema({
-  _id: {
-    type: Number
+  phoneNo: {
+    type: Number,
+    required: true
+  },
+  motto: {
+    type: String,
+    default: null
   },
   password: {
-    type: String
+    type: String,
+    required: true
+  },
+  level: {
+    type: Number,
+    default: 1
   },
   email: {
-    type: String
+    type: String,
+    default: null
   },
   nickname: {
-    type: String
+    type: String,
+    default: '秀儿~'
+  },
+  isVip: {
+    type: Boolean,
+    default: false
   },
   gender: {
     type: String,
@@ -19,46 +36,51 @@ const UserSchema = new Schema({
     default: 'male'
   },
   headPortrait: {
-    type: String
+    type: String,
+    default: null
   },
   brithday: {
     type: Date,
-    default: Date.now
+    default: new Date('1991/12/24')
   },
   createDate: {
     type: Date,
-    default: Date.now
+    default: new Date()
   },
   lastLoginTime: {
     type: Date,
-    default: Date.now
+    default: new Date()
   }
 });
 
 export interface UserDocument extends Document {
-  // 用户 id 即用户手机号
-  _id: number;
+  /** 手机号 */
+  phoneNo: number;
+  /** 座右铭 */
+  motto?: string | null;
+  /** 会员等级 */
+  level?: number;
+  /** 是否是VIP */
+  isVip?: boolean;
+  /** 头像 */
+  headPortrait?: string | null;
   // 密码
   password: string;
   // 邮箱
-  email: string;
+  email?: string | null;
   // 昵称
-  nickname: string;
+  nickname?: string | null;
   // 性别
-  gender: string;
-  // 头像地址
-  headPortrait: string;
+  gender?: string;
   // 生日
-  brithday: Date;
+  brithday?: Date;
   // 创建日期
-  createDate: Date;
+  createDate?: Date;
   // 上次登录时间
-  lastLoginTime: Date;
+  lastLoginTime?: Date;
 }
 
-/**
- * 用户
- */
+/** 用户 */
 const User = model<UserDocument>('User', UserSchema);
 
 // User.findOne({}, (err, data) => {

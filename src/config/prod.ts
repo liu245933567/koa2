@@ -19,9 +19,9 @@ const prodConf: Base = {
     useUnifiedTopology: true
   },
   redis: {
-    host: '127.0.0.1',
-    port: 6397,
-    auth_pass: '199699'
+    host: '49.233.26.21',
+    port: 6379,
+    password: '199699'
   },
   staticPath: 'F:special'
 };

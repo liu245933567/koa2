@@ -25,8 +25,7 @@ export interface Base {
   redis: {
     host: string;
     port: number;
-    /** 密码 */
-    auth_pass: string;
+    password: string;
   },
   /** 静态资源路径 */
   staticPath: string;
