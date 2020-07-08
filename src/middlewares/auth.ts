@@ -23,12 +23,29 @@ export const sign = (
   });
 };
 
+/** 从 cookie 中获取用户信息 */
+export const getUserInfoFromCookie = (
+  ctx: Context
+): Promise<{ phoneNo: string; password: string } | null> => {
+  const token = ctx.cookies.get('token');
+
+  return new Promise((resolve) => {
+    jwt.verify(token || '', SECRET, (err, decoded: any) => {
+      if (err) {
+        resolve(null);
+      } else {
+        resolve({
+          phoneNo: decoded.phoneNo as string,
+          password: decoded.password as string
+        });
+      }
+    });
+  });
+};
+
 /** 校验是否存在登陆状态 */
 export const verify = async (ctx: Context, next: Next) => {
-  if (
-    ctx.originalUrl.indexOf('login.json') < 0 &&
-    ctx.originalUrl.indexOf('register.json') < 0
-  ) {
+  if (ctx.originalUrl.indexOf('loginRegister.json') < 0) {
     const token = ctx.cookies.get('token');
     let isVerifyed = true;
 
