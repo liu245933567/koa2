@@ -3,7 +3,7 @@
  * @Description: iimanhua 网址的dom解析方法
  * @Date: 2020-07-04 19:26:16
  * @Last Modified by: LiuYh
- * @Last Modified time: 2020-07-04 20:21:18
+ * @Last Modified time: 2020-07-08 15:21:20
  */
 
 import { clearElText, IImanhuaImageHOST } from './utils';
@@ -28,13 +28,9 @@ export function resolveCategorys($: CheerioStatic, selectStr: string) {
 
   $(selectStr).each((i, v) => {
     /** 种类名称 */
-    const category = $(v)
-      .find('a')
-      .text();
+    const category = $(v).find('a').text();
     /** 种类code */
-    const categoryKey = $(v)
-      .find('a')
-      .attr('href') as string;
+    const categoryKey = $(v).find('a').attr('href') as string;
 
     if (i !== 0 && categoryKey && categoryKey) {
       categorys.push({
@@ -60,23 +56,15 @@ export function getRecommendCartoon(
   $(`.${type} .coverMhList .scroll li`).each((i, v) => {
     const $cover = $(v).find('a.pic');
     const detailHref = $($cover).attr('href') || '';
-    const coverPictureSrc =
-      $($cover)
-        .children('img')
-        .attr('src') || '';
-    const $coverInfoChildren = $(v)
-      .find('p.coverInfo')
-      .children();
+    const coverPictureSrc = $($cover).children('img').attr('src') || '';
+    const $coverInfoChildren = $(v).find('p.coverInfo').children();
     const cartoonName = $coverInfoChildren.eq(0).text();
     const cartoonAuthor = clearElText($coverInfoChildren.eq(1));
     const cartoonCategory = clearElText($coverInfoChildren.eq(2));
     const latestChapter = clearElText($coverInfoChildren.eq(3));
     const upDataTime =
-      $coverInfoChildren.eq(4) &&
-        $coverInfoChildren
-          .eq(4)
-          .find('font')
-          .text() ||
+      ($coverInfoChildren.eq(4) &&
+        $coverInfoChildren.eq(4).find('font').text()) ||
       '';
 
     resultArr.push({
@@ -115,22 +103,10 @@ export function resolveOtherRecommendList($: CheerioStatic) {
 
     curInfo.recommend.title = $floorLeft.find('h4 a').text() || '';
     $floorLeft.find('ul li').each((ri, rv) => {
-      const coverPictureSrc =
-        $(rv)
-          .find('a.pic img')
-          .attr('src') || '';
-      const detailHref =
-        $(rv)
-          .find('a.pic')
-          .attr('href') || '';
-      const latestChapter =
-        $(rv)
-          .find('.cover span')
-          .text() || '';
-      const cartoonName =
-        $(rv)
-          .children('a')
-          .text() || '';
+      const coverPictureSrc = $(rv).find('a.pic img').attr('src') || '';
+      const detailHref = $(rv).find('a.pic').attr('href') || '';
+      const latestChapter = $(rv).find('.cover span').text() || '';
+      const cartoonName = $(rv).children('a').text() || '';
 
       curInfo.recommend.recommendList.push({
         coverPictureSrc,
@@ -149,26 +125,12 @@ export function resolveOtherRecommendList($: CheerioStatic) {
 
       if (ri === 0) {
         cartoonName =
-          $(rv)
-            .find('.cover span')
-            .clone()
-            .children()
-            .remove()
-            .end()
-            .text() || '';
-        detailHref =
-          $(rv)
-            .find('.cover .pic')
-            .attr('href') || '';
+          $(rv).find('.cover span').clone().children().remove().end().text() ||
+          '';
+        detailHref = $(rv).find('.cover .pic').attr('href') || '';
       } else {
-        cartoonName =
-          $(rv)
-            .children('a')
-            .text() || '';
-        detailHref =
-          $(rv)
-            .children('a')
-            .attr('href') || '';
+        cartoonName = $(rv).children('a').text() || '';
+        detailHref = $(rv).children('a').attr('href') || '';
       }
 
       curInfo.rank.rankList.push({
@@ -255,10 +217,7 @@ export function getCartoonListInfos($: CheerioStatic, selectStr: string) {
     /** 详情地址 */
     const detailHref = cur.find('a').attr('href') || '';
     /** 动漫名字 */
-    const cartoonName = cur
-      .children('dl')
-      .find('dt a')
-      .text();
+    const cartoonName = cur.children('dl').find('dt a').text();
 
     cartoonList.push({
       coverPictureSrc,
@@ -307,19 +266,13 @@ export function resolveCartoonDetail($: CheerioStatic) {
   const state = $('.titleInfo span').text();
   const $infoUl = $('.detailInfo ul li');
   /** 更新时间 */
-  const upDataTime = $infoUl
-    .eq(0)
-    .find('font')
-    .text();
+  const upDataTime = $infoUl.eq(0).find('font').text();
   /** 漫画作者 */
   const cartoonAuthor = clearElText($infoUl.eq(1));
   /** 漫画分类 */
   const cartoonCategory = clearElText($infoUl.eq(2));
   /** 字母索引 */
-  const alphabetIndex = $infoUl
-    .eq(3)
-    .find('a')
-    .text();
+  const alphabetIndex = $infoUl.eq(3).find('a').text();
   /** 别名 */
   const alias = clearElText($infoUl.eq(4));
   /** 最新章节 */
@@ -338,20 +291,10 @@ export function resolveCartoonDetail($: CheerioStatic) {
 
   if ($similarList) {
     $similarList.each((i, v) => {
-      const cpSrc =
-        $(v)
-          .find('img')
-          .attr('src') || '';
-      const cName = $(v)
-        .children('a')
-        .text();
-      const cHref =
-        $(v)
-          .children('a')
-          .attr('href') || '';
-      const lChapter = $(v)
-        .find('.cover span')
-        .text();
+      const cpSrc = $(v).find('img').attr('src') || '';
+      const cName = $(v).children('a').text();
+      const cHref = $(v).children('a').attr('href') || '';
+      const lChapter = $(v).find('.cover span').text();
 
       recommendList.push({
         cartoonName: cName,
@@ -406,9 +349,7 @@ export function resolveSectionImages(htmlText: string) {
   /** base64 js代码片段 */
   const base64js = mathArr[0].slice(8, -2);
   /** 解码后的js代码 */
-  const deCode = Buffer.from(base64js, 'base64')
-    .toString()
-    .slice(4);
+  const deCode = Buffer.from(base64js, 'base64').toString().slice(4);
   // 执行解析后的代码
 
   // eslint-disable-next-line no-eval

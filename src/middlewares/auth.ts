@@ -1,10 +1,11 @@
 import * as jwt from 'jsonwebtoken';
 import * as koaJwt from 'koa-jwt';
 import { Context, Next } from 'koa';
-// import userModel from '@models/user';
+import userModel from '@models/user';
 
 const SECRET = 'shared-secret';
 
+/** 标记登陆状态 */
 export const sign = (
   ctx: Context,
   info: { phoneNo: number; password: string }
@@ -22,6 +23,7 @@ export const sign = (
   });
 };
 
+/** 校验是否存在登陆状态 */
 export const verify = async (ctx: Context, next: Next) => {
   if (
     ctx.originalUrl.indexOf('login.json') < 0 &&
@@ -31,19 +33,21 @@ export const verify = async (ctx: Context, next: Next) => {
     let isVerifyed = true;
 
     if (token) {
-      // let phoneNo: number = 111,
-      //   password: string = '111';
+      let phoneNo: string = '111',
+        password: string = '111';
 
       jwt.verify(token, SECRET, (err, decoded: any) => {
         if (err) {
           isVerifyed = false;
         } else {
-          // phoneNo = decoded.phoneNo;
-          // password = decoded.password;
+          phoneNo = decoded.phoneNo;
+          password = decoded.password;
         }
       });
       if (isVerifyed) {
-        // isVerifyed = await userModel.findOne({ phoneNo, password });
+        const findResult = await userModel.findOne({ phoneNo, password });
+
+        isVerifyed = Boolean(findResult);
       }
     } else {
       isVerifyed = false;
@@ -54,8 +58,8 @@ export const verify = async (ctx: Context, next: Next) => {
       ctx.status = 401;
       ctx.body = {
         isOk: false,
-        code: 401,
-        msg: '请先登录~'
+        code: 'REQUIER_LOGIN',
+        message: '请先登录~'
       };
     }
   } else {

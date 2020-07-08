@@ -11,13 +11,12 @@ import {
   cors
 } from '@middlewares/cors';
 import loger from '@middlewares/loger';
-// import { verify } from '@middlewares/auth';
+import { verify } from '@middlewares/auth';
 import cartoon from '@routes/cartoon';
 // import video from '@routes/video';
 // import admin from '@routes/admin';
 
 import user from '@routes/user';
-
 
 const app = new Koa();
 const router = new Router();
@@ -26,10 +25,9 @@ const router = new Router();
 app.use(cors);
 app.use(bodyParser());
 app.use(range);
-// app.use(staticServer(path.join(__dirname, './public/')));
 app.use(staticServer(config.staticPath));
 app.use(loger);
-// app.use(verify);
+app.use(verify);
 
 router.use('/cartoon', cartoon.routes(), cartoon.allowedMethods());
 // router.use('/admin', admin.routes(), admin.allowedMethods());

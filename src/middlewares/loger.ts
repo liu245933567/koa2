@@ -1,11 +1,11 @@
-import {logError, logResponse} from '@utils/log';
-import {Context, Next} from 'koa';
+import { logError, logResponse } from '@utils/log';
+import { Context, Next } from 'koa';
 
-export default async (ctx:Context, next:Next) => {
+export default async (ctx: Context, next: Next) => {
   //响应开始时间
   const start = new Date().getTime();
   //响应间隔时间
-  let ms:number;
+  let ms: number;
 
   try {
     //开始进入到下一个中间件

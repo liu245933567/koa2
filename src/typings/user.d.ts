@@ -1,6 +1,6 @@
 export interface IUserInfo {
   /** 手机号 */
-  phoneNo: number;
+  phoneNo: string;
   /** 座右铭 */
   motto: string | null;
   /** 会员等级 */

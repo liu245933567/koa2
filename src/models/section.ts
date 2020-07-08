@@ -1,20 +1,25 @@
 import { Schema, model, Document } from 'mongoose';
 
-const SectionSchema = new Schema({
-  _id: {
-    type: Number
+const SectionSchema = new Schema(
+  {
+    _id: {
+      type: Number
+    },
+    cartoonId: {
+      type: Number,
+      index: true
+    },
+    sectionTitle: {
+      type: String
+    },
+    imagesList: [
+      {
+        type: String
+      }
+    ]
   },
-  cartoonId: {
-    type: Number,
-    index: true
-  },
-  sectionTitle: {
-    type: String
-  },
-  imagesList: [{
-    type: String
-  }]
-}, {versionKey: false});
+  { versionKey: false }
+);
 
 export interface SectionDocument extends Document {
   // 章节 id
@@ -32,7 +37,7 @@ export interface SectionDocument extends Document {
  */
 const Section = model<SectionDocument>('Section', SectionSchema);
 
-Section.findOne({}, (err:any, data) => {
+Section.findOne({}, (err: any, data) => {
   if (!data) {
     Section.create({
       _id: 1,

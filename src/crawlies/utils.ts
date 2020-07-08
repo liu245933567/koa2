@@ -10,14 +10,7 @@ charset(superagent);
 
 /** 取得元素内非元素的内容 */
 export const clearElText = (el: Cheerio) =>
-  el &&
-    el
-      .clone()
-      .children()
-      .remove()
-      .end()
-      .text() ||
-  '';
+  (el && el.clone().children().remove().end().text()) || '';
 
 /**
  * 获取html信息

@@ -3,7 +3,7 @@ import { Schema, model, Document } from 'mongoose';
 
 const UserSchema = new Schema({
   phoneNo: {
-    type: Number,
+    type: String,
     required: true
   },
   motto: {
@@ -55,7 +55,7 @@ const UserSchema = new Schema({
 
 export interface UserDocument extends Document {
   /** 手机号 */
-  phoneNo: number;
+  phoneNo: string;
   /** 座右铭 */
   motto?: string | null;
   /** 会员等级 */
@@ -82,18 +82,5 @@ export interface UserDocument extends Document {
 
 /** 用户 */
 const User = model<UserDocument>('User', UserSchema);
-
-// User.findOne({}, (err, data) => {
-//   if (!data) {
-//     Cartoon.create({
-//       _id: 1,
-//       description: '无',
-//       cartoonName: '无',
-//       updataTime: new Date(),
-//       coverImage: '无',
-//       sections: [1]
-//     });
-//   }
-// });
 
 export default User;

@@ -1,9 +1,8 @@
 import * as koaCors from 'koa2-cors';
 import { Context, Next } from 'koa';
 export const cors = koaCors({
-  origin: function(ctx: Context) {
+  origin: function (ctx: Context) {
     if (ctx.url === '/test') {
-
       return '*'; // 允许来自所有域名请求
     }
     return 'http://192.168.173.1:8200'; // 这样就能只允许 http://localhost: 8080 这个域名的请求了
@@ -15,7 +14,7 @@ export const cors = koaCors({
   allowHeaders: ['Content-Type', 'Authorization', 'Accept']
 });
 
-export const setHeader = async (ctx:Context, next: Next) => {
+export const setHeader = async (ctx: Context, next: Next) => {
   // 允许来自所有域名请求
   ctx.set('Access-Control-Allow-Origin', '*');
   // 这样就能只允许 http://localhost:8080 这个域名的请求了

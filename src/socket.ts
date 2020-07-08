@@ -9,11 +9,11 @@ export default function mountSocket(server: Server) {
   //监听socket连接
 
   io.on('connection', (client) => {
-    client.on('message', async function(message) {
+    client.on('message', async function (message) {
       console.log(message);
     });
 
-    client.on('toCrawling', async function(message) {
+    client.on('toCrawling', async function (message) {
       console.log(message);
       // if (canCraw) {
       //   const crawler = new Crawler((param) => {
@@ -29,7 +29,7 @@ export default function mountSocket(server: Server) {
     });
 
     //监听客户端断开连接
-    client.on('disconnect', async function() {
+    client.on('disconnect', async function () {
       console.log('断开连接');
     });
   });

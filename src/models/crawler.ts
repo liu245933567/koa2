@@ -1,17 +1,20 @@
 import { Schema, model, Document } from 'mongoose';
 
-const CrawlerSchema = new Schema({
-  name: {
-    type: String
+const CrawlerSchema = new Schema(
+  {
+    name: {
+      type: String
+    },
+    type: {
+      type: String,
+      enum: ['cartoon']
+    },
+    href: {
+      type: String
+    }
   },
-  type: {
-    type: String,
-    enum: ['cartoon']
-  },
-  href: {
-    type: String
-  }
-}, {versionKey: false});
+  { versionKey: false }
+);
 
 export interface CrawlerDocument extends Document {
   // 爬虫名称

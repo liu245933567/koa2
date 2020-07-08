@@ -4,7 +4,7 @@ module.exports = {
     'node': true
   },
   'extends': [
-    // 'prettier',
+    'prettier',
     // 'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     // 'plugin:@typescript-eslint/recommended',
@@ -17,8 +17,12 @@ module.exports = {
     "project": "./tsconfig.json"
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint", 
+    "prettier"
+  ],
   'rules': {
+    "prettier/prettier": "error",
     // 数组和对象键值对最后一个逗号， never参数：不能带末尾的逗号, always参数：必须带末尾的逗号，
     // always-multiline 多行模式必须带逗号，单行模式不能带逗号
     'comma-dangle': [2, 'never'],
@@ -108,7 +112,7 @@ module.exports = {
     'no-extend-native': 2, //禁止扩展native对象
     'no-extra-bind': 2, //禁止不必要的函数绑定
     'no-extra-boolean-cast': 2, //禁止不必要的bool转换
-    'no-extra-parens': 2, //禁止非必要的括号
+    // 'no-extra-parens': 2, //禁止非必要的括号
     'no-extra-semi': 2, //禁止多余的冒号
     'no-fallthrough': 1, //禁止switch穿透
     'no-floating-decimal': 2, //禁止省略浮点数中的0 .5 3.
@@ -221,7 +225,7 @@ module.exports = {
     'object-shorthand': 0, //强制对象字面量缩写语法
     'one-var': 0, //连续声明
     'operator-assignment': [0, 'always'], //赋值运算符 += -=什么的
-    'operator-linebreak': [2, 'after'], //换行时运算符在行尾还是行首
+    // 'operator-linebreak': [2, 'before'], //换行时运算符在行尾还是行首
     'padded-blocks': 0, //块语句内行首行尾是否要空行
     'prefer-const': 0, //首选const
     'prefer-spread': 0, //首选展开运算
