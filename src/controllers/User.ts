@@ -2,7 +2,8 @@ import { Context } from 'koa';
 import userModel, { UserDocument } from '@models/user';
 import { sign, getUserInfoFromCookie } from '@middlewares/auth';
 import { apiError } from '@utils/ApiError';
-import { IUserResInfo } from '@typings/user';
+// import { IUserResInfo } from '@typings/user';
+import { autobind } from 'core-decorators';
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDHHMMSS
@@ -18,15 +19,29 @@ import {
 class User {
   /** 格式化文档参数 */
   private formatInfo(userDoc: UserDocument) {
-    // 删除不必要参数
-    delete userDoc.password;
-    delete userDoc.__v;
-    delete userDoc._id;
-
-    const { brithday, createDate, lastLoginTime } = userDoc;
+    const {
+      brithday,
+      createDate,
+      lastLoginTime,
+      email,
+      gender,
+      headPortrait,
+      isVip,
+      level,
+      motto,
+      nickname,
+      phoneNo
+    } = userDoc;
 
     return {
-      ...userDoc,
+      email,
+      gender,
+      headPortrait,
+      isVip,
+      level,
+      motto,
+      nickname,
+      phoneNo,
       // 格式化时间
       brithday: formatDateToYYYYMMDD(brithday),
       createDate: formatDateToYYYYMMDDHHMMSS(createDate),
@@ -35,6 +50,7 @@ class User {
   }
 
   /** 获取登陆状态 */
+  @autobind
   public async loginStatus(ctx: Context) {
     const cookieInfo = await getUserInfoFromCookie(ctx);
     let result = null;
@@ -54,6 +70,7 @@ class User {
   }
 
   /** 登陆注册功能 */
+  @autobind
   public async loginRegister(ctx: Context) {
     const { phoneNo, password } = ctx.request.body;
 
