@@ -4,10 +4,13 @@ import { sign, getUserInfoFromCookie } from '@middlewares/auth';
 import { apiError } from '@utils/ApiError';
 // import { IUserResInfo } from '@typings/user';
 import { autobind } from 'core-decorators';
+import * as uuid from 'uuid';
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDHHMMSS
 } from '@utils/moment';
+import * as fs from 'fs';
+import { upToQiniu } from '@utils/uploader';
 import {
   isMobile,
   // isEmail,
@@ -17,6 +20,9 @@ import {
 } from '@utils/rexp';
 
 class User {
+  /** 上传头像图片路径 */
+  private readonly uploadImagePath = 'images/headPortraits/';
+
   /** 格式化文档参数 */
   private formatInfo(userDoc: UserDocument) {
     const {
@@ -104,6 +110,46 @@ class User {
       message: '登陆成功',
       result: this.formatInfo(findResult)
     };
+  }
+
+  /** 上传图片至七牛云 */
+  @autobind
+  async uploadFile2(ctx: Context) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (!cookieInfo) {
+      throw apiError('REQUIRE_LOGIN', '请先登录');
+    }
+    const { phoneNo } = cookieInfo;
+    /** 上传至本服务器的文件 */
+    const file = ctx.request.files?.file;
+
+    if (file) {
+      /** 命名文件 */
+      const fileName = uuid.v1();
+      /** 文件可读流 */
+      const reader = fs.createReadStream(file.path);
+      /** 上传文件扩展名 */
+      const ext = file.name.split('.').pop();
+      /** 用户路径 */
+      const userPath = `${phoneNo}/`;
+      /** 命名文件以及拓展名 */
+      const fileUrl = `${this.uploadImagePath}${userPath}${fileName}.${ext}`;
+      /** 调用方法(封装在utils文件夹内) */
+      const result = await upToQiniu(reader, fileUrl);
+
+      await fs.promises.unlink(file.path);
+
+      if (result) {
+        ctx.body = {
+          message: '上传成功'
+        };
+      } else {
+        throw apiError('ERROR', '上传图片失败');
+      }
+    } else {
+      throw apiError('PARAM_MISS', '请选择图片上传');
+    }
   }
 }
 
