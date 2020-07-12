@@ -1,19 +1,11 @@
 import * as Router from 'koa-router';
-import {
-  getCartoonList,
-  getCartoonDetail,
-  getSectionDetail,
-  getCartoonHomeInfo,
-  cartoonSearch,
-  cartoonCategoryInfo
-} from '@controllers/Cartoon';
+import cartoon from '@controllers/Cartoon';
 const router = new Router();
 
-router.post('/cartoonHome.json', getCartoonHomeInfo);
-router.post('/cartoonSearch.json', cartoonSearch);
-router.post('/cartoonCategoryInfo.json', cartoonCategoryInfo);
-router.post('/cartoonList.json', getCartoonList);
-router.post('/cartoonDetail.json', getCartoonDetail);
-router.post('/sectionDetail.json', getSectionDetail);
+router.post('/cartoonHome.json', cartoon.getCartoonHomeInfo);
+router.post('/cartoonSearch.json', cartoon.cartoonSearch);
+router.post('/cartoonCategoryInfo.json', cartoon.cartoonCategoryInfo);
+router.post('/cartoonDetail.json', cartoon.getCartoonDetail);
+router.post('/sectionDetail.json', cartoon.getSectionDetail);
 
 export default router;

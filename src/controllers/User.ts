@@ -142,7 +142,8 @@ class User {
 
       if (result) {
         ctx.body = {
-          message: '上传成功'
+          message: '上传成功',
+          result
         };
       } else {
         throw apiError('ERROR', '上传图片失败');

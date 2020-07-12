@@ -17,7 +17,10 @@ const QINIU = {
   origin: 'http://qiniu.yanyuge.xyz/'
 };
 
-const upToQiniu = (localFile: NodeJS.ReadableStream, key: string) => {
+const upToQiniu = (
+  localFile: NodeJS.ReadableStream,
+  key: string
+): Promise<{ fileHref: string } | null> => {
   const accessKey = QINIU.accessKey;
   const secretKey = QINIU.secretKey;
   const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
@@ -46,8 +49,12 @@ const upToQiniu = (localFile: NodeJS.ReadableStream, key: string) => {
       (respErr, respBody, respInfo) => {
         if (respErr) {
           reject(null);
+        } else if (respBody) {
+          resolved({
+            fileHref: respBody.key
+          });
         } else {
-          resolved({ key: `${QINIU.origin}${respBody.key}` });
+          reject(null);
         }
       }
     );

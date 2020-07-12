@@ -98,9 +98,9 @@ export async function getCategoryPageInfo(
   categoryPath: string = '/shaonianrexue'
 ): Promise<ICategoryPageInfo | ILetterPageInfo | ISearchPageInfo | null> {
   const url =
-    type === 'SEARCH' ?
-      'https://www.iimanhua.com/e/search/' + categoryPath :
-      IImanhuaHOST + categoryPath;
+    type === 'SEARCH'
+      ? 'https://www.iimanhua.com/e/search/' + categoryPath
+      : IImanhuaHOST + categoryPath;
   const { $ } = await getHtmlDom(url);
 
   if (!$) {

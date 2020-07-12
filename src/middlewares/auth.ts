@@ -72,7 +72,6 @@ export const verify = async (ctx: Context, next: Next) => {
     if (isVerifyed) {
       await next();
     } else {
-      ctx.status = 401;
       ctx.body = {
         isOk: false,
         code: 'REQUIER_LOGIN',
