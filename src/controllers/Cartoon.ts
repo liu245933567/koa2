@@ -1,5 +1,10 @@
 import { Context } from 'koa';
-import { ICartoonHomeRes } from '@typings/cartoon';
+import {
+  ICartoonHomeRes,
+  CartoonDetail,
+  SectionInfo,
+  CartoonOtherRecommendInfo
+} from '@typings/cartoon';
 import {
   searchCartoon,
   getHomePageInfo,
@@ -7,10 +12,13 @@ import {
   getSectionDetailInfo,
   getCategoryPageInfo
 } from '@crawlies/iimanhua';
+import { getUserInfoFromCookie } from '@middlewares/auth';
 import { apiError } from '@utils/ApiError';
+import { autobind } from 'core-decorators';
 import { redisGet, redisSet } from '@src/redisDB';
 import cartoonModel from '@models/cartoon';
 import sectionModel from '@models/section';
+import cartoonHistoryModel from '@models/cartoonHistory';
 import { dateDiff } from '@utils/moment';
 
 /**
@@ -56,7 +64,122 @@ class Cartoon {
     };
   }
 
+  /**
+   * 设置当前观看的漫画信息
+   * @param cartoonDetail 当前正在浏览的动漫详情信息
+   */
+  private async setCurrentCartoonInfo(
+    ctx: Context,
+    cartoonDetail: CartoonDetail
+  ) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (cookieInfo) {
+      const { phoneNo } = cookieInfo;
+      const {
+        detailHref,
+        cartoonName,
+        coverPictureSrc,
+        latestChapter
+      } = cartoonDetail;
+
+      await redisSet(`current_cartoon_${phoneNo}`, {
+        detailHref,
+        cartoonName,
+        coverPictureSrc,
+        latestChapter
+      });
+    }
+  }
+
+  /** 获取历史记录 */
+  public async getCartoonHistory(ctx: Context) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (cookieInfo) {
+      const curCartoonHistory = await cartoonHistoryModel.find(
+        {
+          phoneNo: cookieInfo.phoneNo
+        },
+        { phoneNo: 0, _id: 0 }
+      );
+
+      ctx.body = {
+        result: curCartoonHistory
+      };
+    } else {
+      apiError('REQUIRE_LOGIN');
+    }
+  }
+
+  /** 设置动漫浏览历史记录 */
+  private async setCartoonHistory(ctx: Context, sectionDeatil: SectionInfo) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (cookieInfo) {
+      const currentCartoonInfo: CartoonOtherRecommendInfo | null = await redisGet(
+        `current_cartoon_${cookieInfo.phoneNo}`
+      );
+
+      if (currentCartoonInfo) {
+        const {
+          detailHref,
+          cartoonName,
+          coverPictureSrc,
+          latestChapter
+        } = currentCartoonInfo;
+        const { sectionHref, sectionTitle, sectionId } = sectionDeatil;
+        const curCartoonHistory = await cartoonHistoryModel.findOne({
+          detailHref,
+          phoneNo: cookieInfo.phoneNo
+        });
+
+        if (!curCartoonHistory) {
+          await cartoonHistoryModel.create({
+            detailHref,
+            cartoonName,
+            coverPictureSrc,
+            latestChapter,
+            anchorSection: sectionTitle,
+            anchorSectionHref: sectionHref,
+            watchedSections: [
+              { sectionTitle, sectionHref, sectionId, isWatched: true }
+            ],
+            phoneNo: cookieInfo.phoneNo
+          });
+        } else {
+          const curSectionHistorys = curCartoonHistory.watchedSections;
+          const findHistoryResult = curSectionHistorys.find(
+            (item) => item.sectionId === sectionId
+          );
+
+          if (!findHistoryResult) {
+            await cartoonHistoryModel.update(
+              {
+                detailHref,
+                phoneNo: cookieInfo.phoneNo
+              },
+              {
+                detailHref,
+                cartoonName,
+                coverPictureSrc,
+                latestChapter,
+                anchorSection: sectionTitle,
+                anchorSectionHref: sectionHref,
+                watchedSections: [
+                  ...curSectionHistorys,
+                  { sectionTitle, sectionHref, sectionId, isWatched: true }
+                ]
+              }
+            );
+          }
+        }
+      }
+    }
+  }
+
   /** 获取动漫详情 */
+  @autobind
   public async getCartoonDetail(ctx: Context) {
     const { cartoonPath } = ctx.request.body;
 
@@ -70,6 +193,7 @@ class Cartoon {
         const diffNum = dateDiff(upDataTime, new Date());
 
         if (diffNum < 4) {
+          await this.setCurrentCartoonInfo(ctx, findResult);
           ctx.body = {
             result: findResult
           };
@@ -81,6 +205,7 @@ class Cartoon {
               { detailHref: cartoonPath },
               cartoonDetail
             );
+            await this.setCurrentCartoonInfo(ctx, cartoonDetail);
           }
           ctx.body = {
             result: cartoonDetail
@@ -91,6 +216,7 @@ class Cartoon {
 
         if (cartoonDetail) {
           await cartoonModel.create(cartoonDetail);
+          await this.setCurrentCartoonInfo(ctx, cartoonDetail);
         }
 
         ctx.body = {
@@ -102,9 +228,8 @@ class Cartoon {
     }
   }
 
-  /**
-   * 获取章节详情
-   */
+  /** 获取章节详情 */
+  @autobind
   public async getSectionDetail(ctx: Context) {
     const { sectionPath } = ctx.request.body;
 
@@ -123,12 +248,14 @@ class Cartoon {
               { sectionHref: sectionPath },
               sectionDeatil
             );
+            await this.setCartoonHistory(ctx, sectionDeatil);
           }
 
           ctx.body = {
             result: sectionDeatil
           };
         } else {
+          await this.setCartoonHistory(ctx, findResult);
           ctx.body = {
             result: findResult
           };
@@ -138,6 +265,7 @@ class Cartoon {
 
         if (sectionDeatil) {
           await sectionModel.create(sectionDeatil);
+          await this.setCartoonHistory(ctx, sectionDeatil);
         }
 
         ctx.body = {
