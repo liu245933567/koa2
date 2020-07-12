@@ -1,4 +1,5 @@
 import { Context } from 'koa';
+import { ICartoonHomeRes } from '@typings/cartoon';
 import {
   searchCartoon,
   getHomePageInfo,
@@ -6,6 +7,11 @@ import {
   getSectionDetailInfo,
   getCategoryPageInfo
 } from '@crawlies/iimanhua';
+import { apiError } from '@utils/ApiError';
+import { redisGet, redisSet } from '@src/redisDB';
+import cartoonModel from '@models/cartoon';
+import sectionModel from '@models/section';
+import { dateDiff } from '@utils/moment';
 
 /**
  * 动漫相关
@@ -13,10 +19,17 @@ import {
 class Cartoon {
   /** 获取漫画首页信息 */
   public async getCartoonHomeInfo(ctx: Context) {
-    const result = await getHomePageInfo();
+    let homeInfo: ICartoonHomeRes | null = await redisGet('cartoon_home_info');
+
+    if (!homeInfo) {
+      homeInfo = await getHomePageInfo();
+      if (homeInfo) {
+        await redisSet('cartoon_home_info', homeInfo);
+      }
+    }
 
     ctx.body = {
-      result
+      result: homeInfo
     };
   }
 
@@ -48,16 +61,44 @@ class Cartoon {
     const { cartoonPath } = ctx.request.body;
 
     if (cartoonPath) {
-      const cartoonDetail = await getCartoonDetailInfo(cartoonPath);
+      const findResult = await cartoonModel.findOne({
+        detailHref: cartoonPath
+      });
 
-      ctx.body = {
-        result: cartoonDetail
-      };
+      if (findResult) {
+        const { upDataTime } = findResult;
+        const diffNum = dateDiff(upDataTime, new Date());
+
+        if (diffNum < 4) {
+          ctx.body = {
+            result: findResult
+          };
+        } else {
+          const cartoonDetail = await getCartoonDetailInfo(cartoonPath);
+
+          if (cartoonDetail) {
+            await cartoonModel.update(
+              { detailHref: cartoonPath },
+              cartoonDetail
+            );
+          }
+          ctx.body = {
+            result: cartoonDetail
+          };
+        }
+      } else {
+        const cartoonDetail = await getCartoonDetailInfo(cartoonPath);
+
+        if (cartoonDetail) {
+          await cartoonModel.create(cartoonDetail);
+        }
+
+        ctx.body = {
+          result: cartoonDetail
+        };
+      }
     } else {
-      ctx.body = {
-        isOk: false,
-        message: '参数不对'
-      };
+      apiError('PARAM_ERROR');
     }
   }
 
@@ -68,16 +109,43 @@ class Cartoon {
     const { sectionPath } = ctx.request.body;
 
     if (sectionPath) {
-      const sectionDeatil = await getSectionDetailInfo(sectionPath);
+      const findResult = await sectionModel.findOne({
+        sectionHref: sectionPath
+      });
 
-      ctx.body = {
-        result: sectionDeatil
-      };
+      if (findResult) {
+        // 更新下一章地址
+        if (!findResult.nextSectionHref) {
+          const sectionDeatil = await getSectionDetailInfo(sectionPath);
+
+          if (sectionDeatil) {
+            await sectionModel.update(
+              { sectionHref: sectionPath },
+              sectionDeatil
+            );
+          }
+
+          ctx.body = {
+            result: sectionDeatil
+          };
+        } else {
+          ctx.body = {
+            result: findResult
+          };
+        }
+      } else {
+        const sectionDeatil = await getSectionDetailInfo(sectionPath);
+
+        if (sectionDeatil) {
+          await sectionModel.create(sectionDeatil);
+        }
+
+        ctx.body = {
+          result: sectionDeatil
+        };
+      }
     } else {
-      ctx.body = {
-        isOk: false,
-        message: '参数不对'
-      };
+      apiError('PARAM_ERROR');
     }
   }
 }

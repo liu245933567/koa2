@@ -25,7 +25,6 @@ import {
   getRecommendCartoon,
   resolveOtherRecommendList
 } from './iimanhuaDom';
-import { redisGet, redisSet } from '@src/redisDB';
 /**
  * 获取搜索地址
  * @param searchStr 查询的字符串
@@ -52,13 +51,7 @@ async function getSearchPath(searchStr: string): Promise<string | undefined> {
 }
 
 /** 获取首页数据 */
-export async function getHomePageInfo() {
-  const homeInfo: ICartoonHomeRes | null = await redisGet('cartoon_home_info');
-
-  if (homeInfo) {
-    return homeInfo;
-  }
-
+export async function getHomePageInfo(): Promise<ICartoonHomeRes | null> {
   const homeUrl = IImanhuaHOST;
   const { $ } = await getHtmlDom(homeUrl);
 
@@ -74,12 +67,6 @@ export async function getHomePageInfo() {
   /** 其他推荐列表 */
   let otherRecommendList = resolveOtherRecommendList($);
 
-  await redisSet('cartoon_home_info', {
-    hotCartoonRecommends,
-    latestRecommends,
-    otherRecommendList,
-    categorys
-  });
   return {
     hotCartoonRecommends,
     latestRecommends,

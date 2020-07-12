@@ -11,49 +11,11 @@ import {
 } from '@utils/moment';
 import * as fs from 'fs';
 import { upToQiniu } from '@utils/uploader';
-import {
-  isMobile,
-  // isEmail,
-  // isYYYYMMDD,
-  // isGender,
-  checkPwd
-} from '@utils/rexp';
+import { isMobile, checkPwd } from '@utils/rexp';
 
 class User {
   /** 上传头像图片路径 */
   private readonly uploadImagePath = 'images/headPortraits/';
-
-  /** 格式化文档参数 */
-  private formatInfo(userDoc: UserDocument) {
-    const {
-      brithday,
-      createDate,
-      lastLoginTime,
-      email,
-      gender,
-      headPortrait,
-      isVip,
-      level,
-      motto,
-      nickname,
-      phoneNo
-    } = userDoc;
-
-    return {
-      email,
-      gender,
-      headPortrait,
-      isVip,
-      level,
-      motto,
-      nickname,
-      phoneNo,
-      // 格式化时间
-      brithday: formatDateToYYYYMMDD(brithday),
-      createDate: formatDateToYYYYMMDDHHMMSS(createDate),
-      lastLoginTime: formatDateToYYYYMMDDHHMMSS(lastLoginTime)
-    };
-  }
 
   /** 获取登陆状态 */
   @autobind
@@ -138,6 +100,7 @@ class User {
       /** 调用方法(封装在utils文件夹内) */
       const result = await upToQiniu(reader, fileUrl);
 
+      // 上传结束后删除缓存图片
       await fs.promises.unlink(file.path);
 
       if (result) {
@@ -151,6 +114,38 @@ class User {
     } else {
       throw apiError('PARAM_MISS', '请选择图片上传');
     }
+  }
+
+  /** 格式化文档参数 */
+  private formatInfo(userDoc: UserDocument) {
+    const {
+      brithday,
+      createDate,
+      lastLoginTime,
+      email,
+      gender,
+      headPortrait,
+      isVip,
+      level,
+      motto,
+      nickname,
+      phoneNo
+    } = userDoc;
+
+    return {
+      email,
+      gender,
+      headPortrait,
+      isVip,
+      level,
+      motto,
+      nickname,
+      phoneNo,
+      // 格式化时间
+      brithday: formatDateToYYYYMMDD(brithday),
+      createDate: formatDateToYYYYMMDDHHMMSS(createDate),
+      lastLoginTime: formatDateToYYYYMMDDHHMMSS(lastLoginTime)
+    };
   }
 }
 
