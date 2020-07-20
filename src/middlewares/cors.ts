@@ -26,7 +26,7 @@ export const setHeader = async (ctx: Context, next: Next) => {
   // 字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段.
   ctx.set(
     'Access-Control-Allow-Headers',
-    'x-requested-with, accept, origin, content-type'
+    'x-requested-with, accept, origin, content-type,access-control-allow-origin, authorization,access-control-allow-credentials,access-control-allow-headers,access-control-allow-methods'
   );
 
   // 服务器收到请求以后，检查了Origin、Access-Control-Request-Method和Access-Control-Request-Headers字段以后，确认允许跨源请求，就可以做出回应。

@@ -5,6 +5,12 @@ import userModel from '@models/user';
 
 const SECRET = 'shared-secret';
 
+const isNoVerify = (url: string) => {
+  const arr = ['loginRegister.json', 'homeInfo.json'];
+
+  return arr.every((item) => url.indexOf(item) < 0);
+};
+
 /** 标记登陆状态 */
 export const sign = (
   ctx: Context,
@@ -45,7 +51,7 @@ export const getUserInfoFromCookie = (
 
 /** 校验是否存在登陆状态 */
 export const verify = async (ctx: Context, next: Next) => {
-  if (ctx.originalUrl.indexOf('loginRegister.json') < 0) {
+  if (isNoVerify(ctx.originalUrl)) {
     const token = ctx.cookies.get('token');
     let isVerifyed = true;
 

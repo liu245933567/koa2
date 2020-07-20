@@ -4,7 +4,7 @@ import * as staticServer from 'koa-static';
 import * as range from 'koa-range';
 import config from '@config/index';
 import responseFormatter from '@middlewares/responseFormatter';
-import { cors } from '@middlewares/cors';
+import { setHeader } from '@middlewares/cors';
 import loger from '@middlewares/loger';
 import { verify } from '@middlewares/auth';
 import koaBody from '@middlewares/koaBody';
@@ -12,7 +12,7 @@ import routes from '@routes/index';
 
 const app = new Koa();
 
-app.use(cors);
+app.use(setHeader);
 // app.use(bodyParser());
 app.use(range);
 app.use(staticServer(config.staticPath));
