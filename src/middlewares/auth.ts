@@ -11,10 +11,16 @@ const isNoVerify = (url: string) => {
   return arr.every((item) => url.indexOf(item) < 0);
 };
 
-/** 标记登陆状态 */
+/**
+ * 标记登陆状态
+ * @param ctx --
+ * @param info 用户信息 手机号、密码
+ * @param isOut 是否是登录
+ */
 export const sign = (
   ctx: Context,
-  info: { phoneNo: number; password: string }
+  info: { phoneNo: string; password: string },
+  isOut = false
 ) => {
   const token = jwt.sign(info, SECRET, { expiresIn: '2 days' });
 
@@ -22,8 +28,8 @@ export const sign = (
   ctx.cookies.set('token', token, {
     domain: '.yanyuge.xyz', // 写cookie所在的域名
     path: '/', // 写cookie所在的路径
-    maxAge: 1000 * 60 * 60 * 24, // cookie有效时长
-    expires: new Date('2029-02-12'), // cookie失效时间
+    maxAge: isOut ? 0 : 1000 * 60 * 60 * 24, // cookie有效时长
+    expires: isOut ? new Date('2009-02-12') : new Date('2029-02-12'), // cookie失效时间
     httpOnly: true, // 是否只用于http请求中获取
     overwrite: true // 是否允许重写
   });

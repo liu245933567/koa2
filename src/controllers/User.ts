@@ -1,5 +1,6 @@
 import { Context } from 'koa';
 import userModel, { UserDocument } from '@models/user';
+import uploadFileModel from '@models/uploadFiles';
 import { sign, getUserInfoFromCookie } from '@middlewares/auth';
 import { apiError } from '@utils/ApiError';
 // import { IUserResInfo } from '@typings/user';
@@ -35,6 +36,18 @@ class User {
       message: result ? '登录成功' : '该用户未登录',
       result
     };
+  }
+
+  /** 退出登录功能 */
+  public async logOut(ctx: Context) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (!cookieInfo) {
+      throw apiError('REQUIRE_LOGIN', '请先登录');
+    }
+    const { phoneNo, password } = cookieInfo;
+
+    sign(ctx, { phoneNo, password }, true);
   }
 
   /** 登陆注册功能 */
@@ -74,9 +87,41 @@ class User {
     };
   }
 
+  /** 修改用户信息 */
+  public async modifyUserInfo(ctx: Context) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (!cookieInfo) {
+      throw apiError('REQUIRE_LOGIN', '请先登录');
+    }
+    const { phoneNo } = cookieInfo;
+    const { nickname, brithday, gender, motto } = ctx.request.body;
+
+    if (!nickname) {
+      throw apiError('PARAM_ERROR', '昵称不能为空');
+    }
+    const upResult = await userModel.update(
+      { phoneNo },
+      {
+        nickname,
+        gender,
+        brithday,
+        motto
+      }
+    );
+
+    if (upResult) {
+      ctx.body = {
+        message: '修改成功'
+      };
+    } else {
+      throw apiError('UNKNOW_ERROR', '修改失败');
+    }
+  }
+
   /** 上传图片至七牛云 */
   @autobind
-  async uploadFile2(ctx: Context) {
+  public async uploadFile2(ctx: Context) {
     const cookieInfo = await getUserInfoFromCookie(ctx);
 
     if (!cookieInfo) {
@@ -104,6 +149,11 @@ class User {
       await fs.promises.unlink(file.path);
 
       if (result) {
+        await uploadFileModel.create({
+          phoneNo,
+          href: result.fileHref,
+          type: 'headPortrait'
+        });
         ctx.body = {
           message: '上传成功',
           result
@@ -114,6 +164,24 @@ class User {
     } else {
       throw apiError('PARAM_MISS', '请选择图片上传');
     }
+  }
+
+  /** 获取上传过的头像 */
+  public async getHeadPortrait(ctx: Context) {
+    const cookieInfo = await getUserInfoFromCookie(ctx);
+
+    if (!cookieInfo) {
+      throw apiError('REQUIRE_LOGIN', '请先登录');
+    }
+    const { phoneNo } = cookieInfo;
+    const images = await uploadFileModel.find({
+      phoneNo,
+      type: 'headPortrait'
+    });
+
+    ctx.body = {
+      result: images.map((item) => item.href)
+    };
   }
 
   /** 格式化文档参数 */
