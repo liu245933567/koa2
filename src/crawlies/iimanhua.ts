@@ -42,7 +42,7 @@ async function getSearchPath(searchStr: string): Promise<string | undefined> {
   };
   const postData = convertParamsToGbk(formData);
   const res = await toRequestPost(
-    IImanhuaHOST.replace('https://', ''),
+    IImanhuaHOST.replace('http://', ''),
     '/e/search/index.php',
     postData
   );
@@ -86,7 +86,7 @@ export async function getCategoryPageInfo(
 ): Promise<ICategoryPageInfo | ILetterPageInfo | ISearchPageInfo | null> {
   const url =
     type === 'SEARCH'
-      ? 'https://www.iimanhua.com/e/search/' + categoryPath
+      ? 'http://www.iimanhua.com/e/search/' + categoryPath
       : IImanhuaHOST + categoryPath;
   const { $ } = await getHtmlDom(url);
 
