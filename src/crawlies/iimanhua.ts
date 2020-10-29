@@ -188,7 +188,7 @@ export async function getSectionDetailInfo(
   const nextParam = convertParamsToGbk({ id: sectionId });
 
   const { responseData } = await toRequestPost(
-    IImanhuaHOST.replace('https://', ''),
+    IImanhuaHOST.replace('http://', ''),
     '/e/extend/ret_page/index.php',
     nextParam
   );

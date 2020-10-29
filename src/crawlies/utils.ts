@@ -128,7 +128,7 @@ export function toRequestPost(
 }
 
 /** 爱漫画地址 */
-export const IImanhuaHOST = 'https://www.iimanhua.com';
+export const IImanhuaHOST = 'http://www.iimanhua.com';
 
 /** 爱漫画图片地址 */
 export const IImanhuaImageHOST = 'http://res.img.fffimage.com';
