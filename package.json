@@ -37,7 +37,7 @@
     "koa2-cors": "^2.0.6",
     "log4js": "^6.3.0",
     "module-alias": "^2.2.2",
-    "moment": "^2.26.0",
+    "moment": "^2.29.4",
     "mongoose": "^5.9.18",
     "mysql": "^2.18.1",
     "qiniu": "^7.3.2",
